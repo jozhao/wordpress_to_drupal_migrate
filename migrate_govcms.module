@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Module file.
+ */
+
+/**
+ * Implements hook_migrate_api().
+ */
+function migrate_govcms_migrate_api() {
+  $api = [
+    'api' => 2,
+    'wizard extenders' => [
+      'GovCMSMigrateWordPressWizard' => ['GovCMSMigrateWordPressWizardExtender'],
+    ],
+  ];
+
+  return $api;
+}
+
+/**
+ * Implements hook_migrate_api_alter().
+ */
+function migrate_govcms_migrate_api_alter(array &$info) {
+  $info['wordpress_migrate']['wizard classes'] = ['GovCMSMigrateWordPressWizard'];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function migrate_govcms_form_migrate_ui_wizard_alter(&$form, &$form_state) {
+  if (!empty($form['actions']['finish'])) {
+    $extender = $form_state['wizard']->getExtender('GovCMSMigrateWordPressWizardExtender');
+    if ($extender) {
+      $extender->reviewFormAlter($form, $form_state);
+    }
+  }
+}
