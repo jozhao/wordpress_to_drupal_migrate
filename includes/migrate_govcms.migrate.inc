@@ -14,7 +14,14 @@ class GovCMSMigrateWordPress extends WordPressBlog {
    */
   public function migrationClasses() {
     $classes = parent::migrationClasses();
+    $classes['WordPressEexOpportunities'] = 'GovCMSMigrateWordPressEexOpportunities';
+    $classes['WordPressEexCaseStudy'] = 'GovCMSMigrateWordPressEexCaseStudy';
+    $classes['WordPressEexEvent'] = 'GovCMSMigrateWordPressEexEvent';
+    $classes['WordPressEexResources'] = 'GovCMSMigrateWordPressEexResources';
+    $classes['WordPressEexContact'] = 'GovCMSMigrateWordPressEexContact';
     $classes['WordPressGlossary'] = 'GovCMSMigrateWordPressGlossary';
+    $classes['WordPressEexProgram'] = 'GovCMSMigrateWordPressEexProgram';
+    $classes['WordPressEeoOpportunities'] = 'GovCMSMigrateWordPressEeoOpportunities';
     return $classes;
   }
 }
