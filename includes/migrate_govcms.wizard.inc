@@ -147,7 +147,9 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
    * @return mixed
    */
   public function reviewForm(&$form_state) {
+    // Load default form.
     $form = parent::reviewForm($form_state);
+    // Prepare custom content.
     $site_info = migrate_govcms_site_info();
     $message = '';
 
@@ -173,7 +175,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
       '#suffix' => '</div>',
     );
 
-    $form['overview']['message_list'] = array(
+    $form['message_list'] = array(
       '#prefix' => '<ol>',
       '#markup' => $message,
       '#suffix' => '</ol>',
