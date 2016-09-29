@@ -27,7 +27,7 @@ class GovCMSMigrateWordPressEexOpportunities extends GovCMSMigrateWordPressBundl
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    $arguments['bundle'] = $arguments['eex_opportunities_type'];
+    $arguments['bundle'] = $arguments['opportunities_type'];
     $arguments['post_type'] = 'eex_opportunity';
     parent::__construct($arguments);
   }
@@ -42,7 +42,7 @@ class GovCMSMigrateWordPressEexCaseStudy extends GovCMSMigrateWordPressBundle {
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    $arguments['bundle'] = $arguments['eex_case_study_type'];
+    $arguments['bundle'] = $arguments['case_studies_type'];
     $arguments['post_type'] = 'eex_case_study';
     parent::__construct($arguments);
   }
@@ -57,7 +57,7 @@ class GovCMSMigrateWordPressEexEvent extends GovCMSMigrateWordPressBundle {
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    $arguments['bundle'] = $arguments['eex_event_type'];
+    $arguments['bundle'] = $arguments['events_type'];
     $arguments['post_type'] = 'eex_event';
     parent::__construct($arguments);
   }
@@ -72,7 +72,7 @@ class GovCMSMigrateWordPressEexResources extends GovCMSMigrateWordPressBundle {
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    $arguments['bundle'] = $arguments['eex_resources_type'];
+    $arguments['bundle'] = $arguments['additional_resources_type'];
     $arguments['post_type'] = 'eex_resources';
     parent::__construct($arguments);
   }
@@ -87,7 +87,7 @@ class GovCMSMigrateWordPressEexContact extends GovCMSMigrateWordPressBundle {
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    $arguments['bundle'] = $arguments['eex_contact_type'];
+    $arguments['bundle'] = $arguments['contacts_type'];
     $arguments['post_type'] = 'eex_contact';
     parent::__construct($arguments);
   }
@@ -117,7 +117,7 @@ class GovCMSMigrateWordPressEexProgram extends GovCMSMigrateWordPressBundle {
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    $arguments['bundle'] = $arguments['eex_program_type'];
+    $arguments['bundle'] = $arguments['programs_type'];
     $arguments['post_type'] = 'eex_program';
     parent::__construct($arguments);
   }
@@ -132,7 +132,7 @@ class GovCMSMigrateWordPressEeoOpportunities extends GovCMSMigrateWordPressBundl
    * @param array $arguments
    */
   public function __construct(array $arguments) {
-    $arguments['bundle'] = $arguments['eeo_opportunity_type'];
+    $arguments['bundle'] = $arguments['eeo_opportunities_type'];
     $arguments['post_type'] = 'eeo_opportunity';
     parent::__construct($arguments);
   }
