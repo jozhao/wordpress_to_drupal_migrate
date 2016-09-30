@@ -16,6 +16,49 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
   public function __construct(array $arguments) {
     parent::__construct($arguments);
 
+    $this->map = new MigrateSQLMap($this->machineName,
+      array(
+        'wp:term_slug' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'WordPress term machine name',
+        ),
+      ),
+      MigrateDestinationTerm::getKeySchema()
+    );
+
+    $fields = array(
+      'wp:term_taxonomy' => 'Term taxonomy',
+      'wp:term_slug' => 'Unique "machine name" of the term',
+      'wp:term_parent' => 'Term parent',
+      'wp:term_name' => 'User-friendly term name',
+      'wp:term_description' => 'Description of term',
+    );
+
+    // Construct the source and destination objects.
+    $source_options = array(
+      'reader_class' => 'MigrateXMLReader',
+      'cache_counts' => TRUE,
+    );
+
+    $this->source = new MigrateSourceXML($this->wxrFile, '/rss/channel/term',
+      'wp:term_slug', $fields, $source_options, $this->arguments['namespaces']);
+
+    // Set taxonomy destination.
+    $this->destination = new MigrateDestinationTerm($this->arguments['custom_vocabulary']);
+
+    // The basic mappings
+    $this->addFieldMapping('name', 'wp:cat_name')
+      ->xpath('wp:cat_name')
+      ->callbacks('html_entity_decode');
+    $this->addFieldMapping('description', 'wp:category_description')
+      ->xpath('wp:category_description')
+      ->callbacks('html_entity_decode');
+    $this->addFieldMapping('parent', 'wp:term_parent')
+      ->sourceMigration($this->machineName)
+      ->xpath('wp:term_parent');
+
     // Unmapped destination fields
     $this->addFieldMapping('parent_name');
     $this->addFieldMapping('format');
@@ -33,6 +76,7 @@ class GovCMSMigrateWordPressTaxonomyEeoBusinessResponse extends GovCMSMigrateWor
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'eeo_business_response';
     parent::__construct($arguments);
   }
 }
@@ -46,6 +90,7 @@ class GovCMSMigrateWordPressTaxonomyCostCategories extends GovCMSMigrateWordPres
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'cost_categories';
     parent::__construct($arguments);
   }
 }
@@ -59,6 +104,7 @@ class GovCMSMigrateWordPressTaxonomyEnergySavings extends GovCMSMigrateWordPress
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'energy_savings';
     parent::__construct($arguments);
   }
 }
@@ -72,6 +118,7 @@ class GovCMSMigrateWordPressTaxonomyEquipmentType extends GovCMSMigrateWordPress
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'eeo_equipment_type';
     parent::__construct($arguments);
   }
 }
@@ -85,6 +132,7 @@ class GovCMSMigrateWordPressTaxonomyIndustrySectors extends GovCMSMigrateWordPre
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'industry_sectors';
     parent::__construct($arguments);
   }
 }
@@ -98,6 +146,7 @@ class GovCMSMigrateWordPressTaxonomyLocations extends GovCMSMigrateWordPressTaxo
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'locations';
     parent::__construct($arguments);
   }
 }
@@ -111,6 +160,7 @@ class GovCMSMigrateWordPressTaxonomyOpportunityType extends GovCMSMigrateWordPre
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'eeo_opportunity_type';
     parent::__construct($arguments);
   }
 }
@@ -124,6 +174,7 @@ class GovCMSMigrateWordPressTaxonomyPayback extends GovCMSMigrateWordPressTaxono
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'payback';
     parent::__construct($arguments);
   }
 }
@@ -137,6 +188,7 @@ class GovCMSMigrateWordPressTaxonomySector extends GovCMSMigrateWordPressTaxonom
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'eeo_sector';
     parent::__construct($arguments);
   }
 }
@@ -150,6 +202,7 @@ class GovCMSMigrateWordPressTaxonomyTechnologies extends GovCMSMigrateWordPressT
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['custom_vocabulary'] = 'technologies';
     parent::__construct($arguments);
   }
 }
