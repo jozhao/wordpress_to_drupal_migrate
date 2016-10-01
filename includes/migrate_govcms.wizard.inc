@@ -153,6 +153,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
     $site_info = migrate_govcms_site_info();
     // Get vocabularies.
     $vocabularies = !empty($site_info['taxonomy']) ? $site_info['taxonomy'] : NULL;
+    $bundles = !empty($site_info['bundles']) ? $site_info['bundles'] : NULL;
     // Init migration message.
     $message = '';
 
@@ -176,12 +177,16 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
 
       // Add custom migration classes.
       if ($this->contentValues[$type][$type . '_type']) {
-        $class_name = array_values($site_info['bundles'][$type]['migrate_class'])[0];
+        $class_name = array_values($bundles[$type]['migrate_class'])[0];
         // Add custom class into migration.
         $arguments = $this->contentValues[$type];
-        $this->addMigration($site_info['bundles'][$type]['migrate_name'], $class_name, $arguments);
+        // Add dependencies.
+        if (!empty($bundles[$type]['dependencies'])) {
+          $arguments['dependencies'] = array('Author') + $bundles[$type]['dependencies'];
+        }
+        $this->addMigration($bundles[$type]['migrate_name'], $class_name, $arguments);
         // Add into review list.
-        $message .= t('<li>@type will be imported.</li>', ['@type' => $site_info['bundles'][$type]['name']]);
+        $message .= t('<li>@type will be imported.</li>', ['@type' => $bundles[$type]['name']]);
       }
     }
 
