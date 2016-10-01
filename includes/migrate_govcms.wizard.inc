@@ -101,7 +101,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
     // Get context.
     $context = $form_state['wizard']->getCurrentStep()->getContext();
 
-    if (!empty($context['bundle_name']['fields'])) {
+    if (!empty($context['fields'])) {
       // Get bundle.
       $bundle = array_values($this->contentValues[$context['bundle_name']])[0];
 
@@ -113,7 +113,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
         $fields[$field_name] = $values['label'];
       }
 
-      foreach (array_values($context['bundle_name']['fields']) as $field) {
+      foreach (array_values($context['fields']) as $field) {
         $form[$field] = [
           '#type' => 'select',
           '#title' => t('Import @field field into @content_type content type.', [
