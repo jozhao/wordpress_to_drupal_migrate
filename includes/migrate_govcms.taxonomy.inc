@@ -49,11 +49,11 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
     $this->destination = new MigrateDestinationTerm($this->arguments['custom_vocabulary']);
 
     // The basic mappings
-    $this->addFieldMapping('name', 'wp:cat_name')
-      ->xpath('wp:cat_name')
+    $this->addFieldMapping('name', 'wp:term_name')
+      ->xpath('wp:term_name')
       ->callbacks('html_entity_decode');
-    $this->addFieldMapping('description', 'wp:category_description')
-      ->xpath('wp:category_description')
+    $this->addFieldMapping('description', 'wp:term_description')
+      ->xpath('wp:term_description')
       ->callbacks('html_entity_decode');
     $this->addFieldMapping('parent', 'wp:term_parent')
       ->sourceMigration($this->machineName)

@@ -151,7 +151,22 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
     $form = parent::reviewForm($form_state);
     // Prepare custom content.
     $site_info = migrate_govcms_site_info();
+    // Get vocabularies.
+    $vocabularies = !empty($site_info['taxonomy']) ? $site_info['taxonomy'] : NULL;
+    // Init migration message.
     $message = '';
+
+    // Add taxonomy migration.
+    if (!empty($vocabularies)) {
+      foreach ($vocabularies as $vocabulary => $vocabulary_values) {
+        $class_name = array_values($vocabulary_values['migrate_class'])[0];
+        $arguments = [
+          'custom_vocabulary' => !empty($vocabulary_values['vocabulary']) ? $vocabulary_values['vocabulary'] : '',
+          'source' => !empty($vocabulary_values['source_name']) ? $vocabulary_values['source_name'] : '',
+        ];
+        $this->addMigration($vocabulary_values['migrate_name'], $class_name, $arguments);
+      }
+    }
 
     foreach ($this->contentValues as $type => $values) {
       // Ignore types not in custom list.
@@ -163,23 +178,27 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
       if ($this->contentValues[$type][$type . '_type']) {
         $class_name = array_values($site_info['bundles'][$type]['migrate_class'])[0];
         // Add custom class into migration.
-        $this->addMigration($site_info['bundles'][$type]['migrate_name'], $class_name, $this->contentValues[$type]);
+        $arguments = $this->contentValues[$type];
+        $this->addMigration($site_info['bundles'][$type]['migrate_name'], $class_name, $arguments);
         // Add into review list.
         $message .= t('<li>@type will be imported.</li>', ['@type' => $site_info['bundles'][$type]['name']]);
       }
     }
 
-    $form['overview'] = array(
-      '#prefix' => '<div>',
-      '#markup' => t('Custom content types.'),
-      '#suffix' => '</div>',
-    );
+    // Display UI message.
+    if (!empty($message)) {
+      $form['overview'] = array(
+        '#prefix' => '<div>',
+        '#markup' => t('Custom content types.'),
+        '#suffix' => '</div>',
+      );
 
-    $form['message_list'] = array(
-      '#prefix' => '<ol>',
-      '#markup' => $message,
-      '#suffix' => '</ol>',
-    );
+      $form['message_list'] = array(
+        '#prefix' => '<ol>',
+        '#markup' => $message,
+        '#suffix' => '</ol>',
+      );
+    }
 
     return $form;
   }
