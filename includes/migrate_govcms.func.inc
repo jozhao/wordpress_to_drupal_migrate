@@ -12,6 +12,98 @@
  */
 function _migrate_govcms_get_site_info() {
   $site_info = [
+    'taxonomy' => [
+      'eeo_business_response' => [
+        'name' => 'Business Response',
+        'vocabulary' => 'eeo_business_response',
+        'source_name' => 'eeo_business_response',
+        'migrate_name' => 'TaxonomyEeoBusinessResponse',
+        'migrate_class' => [
+          'WordPressTaxonomyEeoBusinessResponse' => 'GovCMSMigrateWordPressTaxonomyEeoBusinessResponse',
+        ],
+      ],
+      'cost_categories' => [
+        'name' => 'Cost Categories',
+        'vocabulary' => 'cost_categories',
+        'source_name' => 'eex_cost',
+        'migrate_name' => 'TaxonomyCostCategories',
+        'migrate_class' => [
+          'WordPressTaxonomyCostCategories' => 'GovCMSMigrateWordPressTaxonomyCostCategories',
+        ],
+      ],
+      'energy_savings' => [
+        'name' => 'Energy Savings',
+        'vocabulary' => 'energy_savings',
+        'source_name' => 'eex_energy_savings',
+        'migrate_name' => 'TaxonomyEnergySavings',
+        'migrate_class' => [
+          'WordPressTaxonomyEnergySavings' => 'GovCMSMigrateWordPressTaxonomyEnergySavings',
+        ],
+      ],
+      'eeo_equipment_type' => [
+        'name' => 'Equipment Type',
+        'vocabulary' => 'eeo_equipment_type',
+        'source_name' => 'eeo_equipment_type',
+        'migrate_name' => 'TaxonomyEquipmentType',
+        'migrate_class' => [
+          'WordPressTaxonomyEquipmentType' => 'GovCMSMigrateWordPressTaxonomyEquipmentType',
+        ],
+      ],
+      'industry_sectors' => [
+        'name' => 'Industry Sectors',
+        'vocabulary' => 'industry_sectors',
+        'source_name' => 'eex_industry',
+        'migrate_name' => 'TaxonomyIndustrySectors',
+        'migrate_class' => [
+          'WordPressTaxonomyIndustrySectors' => 'GovCMSMigrateWordPressTaxonomyIndustrySectors',
+        ],
+      ],
+      'locations' => [
+        'name' => 'Locations',
+        'vocabulary' => 'locations',
+        'source_name' => 'eex_location',
+        'migrate_name' => 'TaxonomyLocations',
+        'migrate_class' => [
+          'WordPressTaxonomyLocations' => 'GovCMSMigrateWordPressTaxonomyLocations',
+        ],
+      ],
+      'eeo_opportunity_type' => [
+        'name' => 'Opportunity Type',
+        'vocabulary' => 'eeo_opportunity_type',
+        'source_name' => 'eeo_opportunity_type',
+        'migrate_name' => 'TaxonomyOpportunityType',
+        'migrate_class' => [
+          'WordPressTaxonomyOpportunityType' => 'GovCMSMigrateWordPressTaxonomyOpportunityType',
+        ],
+      ],
+      'payback' => [
+        'name' => 'Payback',
+        'vocabulary' => 'payback',
+        'source_name' => 'eex_payback',
+        'migrate_name' => 'TaxonomyPayback',
+        'migrate_class' => [
+          'WordPressTaxonomyPayback' => 'GovCMSMigrateWordPressTaxonomyPayback',
+        ],
+      ],
+      'eeo_sector' => [
+        'name' => 'Sector',
+        'vocabulary' => 'eeo_sector',
+        'source_name' => 'eeo_sector',
+        'migrate_name' => 'TaxonomySector',
+        'migrate_class' => [
+          'WordPressTaxonomySector' => 'GovCMSMigrateWordPressTaxonomySector',
+        ],
+      ],
+      'technologies' => [
+        'name' => 'Technologies',
+        'vocabulary' => 'technologies',
+        'source_name' => 'eex_technology',
+        'migrate_name' => 'TaxonomyTechnologies',
+        'migrate_class' => [
+          'WordPressTaxonomyTechnologies' => 'GovCMSMigrateWordPressTaxonomyTechnologies',
+        ],
+      ],
+    ],
     'bundles' => [
       'opportunities' => [
         'name' => 'EEX Opportunities',
