@@ -18,7 +18,7 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
 
     $this->map = new MigrateSQLMap($this->machineName,
       array(
-        'wp:term_slug' => array(
+        'wp:term_id' => array(
           'type' => 'varchar',
           'length' => 255,
           'not null' => TRUE,
@@ -43,7 +43,7 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
     );
 
     $this->source = new MigrateSourceXML($this->wxrFile, '/rss/channel/term',
-      'wp:term_slug', $fields, $source_options, $this->arguments['namespaces']);
+      'wp:term_id', $fields, $source_options, $this->arguments['namespaces']);
 
     // Set taxonomy destination.
     $this->destination = new MigrateDestinationTerm($this->arguments['custom_vocabulary']);
@@ -64,6 +64,40 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
     $this->addFieldMapping('format');
     $this->addFieldMapping('weight');
     $this->addFieldMapping('path');
+  }
+
+  /**
+   * @param $row
+   * @return bool
+   */
+  public function prepareRow($row) {
+    // Always include this fragment at the beginning of every prepareRow()
+    // implementation, so parent classes can ignore rows.
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
+
+    // Source is required in arguments.
+    if (empty($this->arguments['source'])) {
+      return FALSE;
+    }
+
+    // Check if source is equal to term taxonomy.
+    if ($this->arguments['source'] == $this->xpathValue($row->xml->xpath('wp:term_taxonomy'))) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
+   * Reruan xpath value.
+   * @param $result
+   * @return string
+   */
+  public function xpathValue($result) {
+    return (string) reset($result);
   }
 }
 
@@ -105,6 +139,7 @@ class GovCMSMigrateWordPressTaxonomyEnergySavings extends GovCMSMigrateWordPress
    */
   public function __construct(array $arguments) {
     $arguments['custom_vocabulary'] = 'energy_savings';
+    $arguments['source'] = 'eex_energy_savings';
     parent::__construct($arguments);
   }
 }
