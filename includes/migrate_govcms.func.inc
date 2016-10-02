@@ -124,6 +124,68 @@ function _migrate_govcms_get_site_info() {
         ],
       ],
     ],
+    'fields' => [
+      'field_industry_sectors' => [
+        'migrate_description' => 'Industry Sectors (as nicename) assigned to this item',
+      ],
+      'field_technologies' => [
+        'migrate_description' => 'Technologies (as nicename) assigned to this item',
+      ],
+      'field_locations' => [
+        'migrate_description' => 'Locations (as nicename) assigned to this item',
+      ],
+      'field_cost_categories' => [
+        'migrate_description' => 'Cost Categories (as nicename) assigned to this item',
+      ],
+      'field_energy_savings' => [
+        'migrate_description' => 'Energy Savings (as nicename) assigned to this item',
+      ],
+      'field_payback' => [
+        'migrate_description' => 'Payback (as nicename) assigned to this item',
+      ],
+      'field_dollars' => [
+        'migrate_description' => '',
+      ],
+      'field_bolts' => [
+        'migrate_description' => '',
+      ],
+      'field_clocks' => [
+        'migrate_description' => '',
+      ],
+      'field_event_date' => [
+        'migrate_description' => '',
+      ],
+      'field_event_location' => [
+        'migrate_description' => '',
+      ],
+      'field_event_website' => [
+        'migrate_description' => '',
+      ],
+      'field_contact_website' => [
+        'migrate_description' => '',
+      ],
+      'field_contact_phone' => [
+        'migrate_description' => '',
+      ],
+      'field_contact_email' => [
+        'migrate_description' => '',
+      ],
+      'field_feature_image' => [
+        'migrate_description' => '',
+      ],
+      'field_eeo_sector' => [
+        'migrate_description' => 'EEO Sector (as nicename) assigned to this item',
+      ],
+      'field_eeo_equipment_type' => [
+        'migrate_description' => 'EEO Equipment Type (as nicename) assigned to this item',
+      ],
+      'field_eeo_opportunity_type' => [
+        'migrate_description' => 'EEO Opportunity Type (as nicename) assigned to this item',
+      ],
+      'field_eeo_business_response' => [
+        'migrate_description' => 'EEO Business Response (as nicename) assigned to this item',
+      ],
+    ],
     'bundles' => [
       'opportunities' => [
         'name' => 'EEX Opportunities',

@@ -6,6 +6,65 @@
  */
 
 /**
+ * Class GovCMSMigrateWordPressItemSource.
+ */
+class GovCMSMigrateWordPressItemSource extends WordPressItemSource {
+  /**
+   * @var
+   */
+  private $_bundle = '';
+
+  /**
+   * GovCMSMigrateWordPressItemSource constructor.
+   * @param array|string $filename
+   * @param string $post_type
+   * @param string $cache_key
+   * @param array $namespaces
+   */
+  public function __construct($filename, $post_type, $cache_key, array $namespaces) {
+    $this->fields = $this->fields();
+    parent::__construct($filename, $post_type, $cache_key, $namespaces);
+  }
+
+  /**
+   * Set up source fields.
+   */
+  public function fields() {
+    $custom_fields = [];
+    $fields = parent::fields();
+    // Prepare custom content.
+    $site_info = migrate_govcms_site_info();
+    $migrate_fields = !empty($site_info['fields']) ? $site_info['fields'] : NULL;
+    $bundles = !empty($site_info['bundles']) ? $site_info['bundles'] : NULL;
+    $bundle = $this->getBundle();
+
+    // Only load fields defined in migration site information.
+    if (!empty($bundle) && !empty($migrate_fields) && isset($bundles[$bundle])) {
+      $bundle_fields = $bundles[$bundle]['fields'];
+      foreach ($bundle_fields as $bundle_field) {
+        $custom_fields[$bundle_field] = $migrate_fields[$bundle_field]['migrate_description'];
+      }
+    }
+
+    return $fields + $custom_fields;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getBundle() {
+    return $this->_bundle;
+  }
+
+  /**
+   * @param mixed $bundle
+   */
+  public function setBundle($bundle) {
+    $this->_bundle = $bundle;
+  }
+}
+
+/**
  * Class GovCMSMigrateWordPressItemMigration.
  */
 class GovCMSMigrateWordPressItemMigration extends WordPressItemMigration {
@@ -15,6 +74,10 @@ class GovCMSMigrateWordPressItemMigration extends WordPressItemMigration {
    */
   public function __construct(array $arguments = []) {
     parent::__construct($arguments);
+
+    // Construct the source objects.
+    $this->source = new GovCMSMigrateWordPressItemSource($this->wxrFile, $this->postType, $this->machineName, $this->arguments['namespaces']);
+    $this->source->setBundle($this->arguments['bundle']);
   }
 
   /**
