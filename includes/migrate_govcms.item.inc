@@ -30,21 +30,8 @@ class GovCMSMigrateWordPressItemSource extends WordPressItemSource {
    * Set up source fields.
    */
   public function fields() {
-    $custom_fields = [];
     $fields = parent::fields();
-    // Prepare custom content.
-    $site_info = migrate_govcms_site_info();
-    $migrate_fields = !empty($site_info['fields']) ? $site_info['fields'] : NULL;
-    $bundles = !empty($site_info['bundles']) ? $site_info['bundles'] : NULL;
-    $bundle = $this->getBundle();
-
-    // Only load fields defined in migration site information.
-    if (!empty($bundle) && !empty($migrate_fields) && isset($bundles[$bundle])) {
-      $bundle_fields = $bundles[$bundle]['fields'];
-      foreach ($bundle_fields as $bundle_field) {
-        $custom_fields[$bundle_field] = $migrate_fields[$bundle_field]['migrate_description'];
-      }
-    }
+    $custom_fields = $this->getCustomFields();
 
     return $fields + $custom_fields;
   }
@@ -62,6 +49,29 @@ class GovCMSMigrateWordPressItemSource extends WordPressItemSource {
   public function setBundle($bundle) {
     $this->_bundle = $bundle;
   }
+
+  /**
+   * @return array
+   */
+  public function getCustomFields() {
+    $custom_fields = [];
+
+    // Prepare custom content.
+    $site_info = migrate_govcms_site_info();
+    $migrate_fields = !empty($site_info['fields']) ? $site_info['fields'] : NULL;
+    $bundles = !empty($site_info['bundles']) ? $site_info['bundles'] : NULL;
+    $bundle = $this->getBundle();
+
+    // Only load fields defined in migration site information.
+    if (!empty($bundle) && !empty($migrate_fields) && isset($bundles[$bundle])) {
+      $bundle_fields = $bundles[$bundle]['fields'];
+      foreach ($bundle_fields as $bundle_field) {
+        $custom_fields[$bundle_field] = $migrate_fields[$bundle_field]['migrate_description'];
+      }
+    }
+
+    return $custom_fields;
+  }
 }
 
 /**
@@ -78,6 +88,13 @@ class GovCMSMigrateWordPressItemMigration extends WordPressItemMigration {
     // Construct the source objects.
     $this->source = new GovCMSMigrateWordPressItemSource($this->wxrFile, $this->postType, $this->machineName, $this->arguments['namespaces']);
     $this->source->setBundle($this->arguments['bundle']);
+
+    $customFields = $this->source->getCustomFields();
+    if (!empty($customFields)) {
+      foreach ($customFields as $customField => $customFieldValues) {
+        $this->addFieldMapping($customField, $customField);
+      }
+    }
   }
 
   /**
