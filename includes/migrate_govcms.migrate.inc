@@ -22,6 +22,8 @@ class GovCMSMigrateWordPress extends WordPressBlog {
     $classes['WordPressGlossary'] = 'GovCMSMigrateWordPressGlossary';
     $classes['WordPressEexProgram'] = 'GovCMSMigrateWordPressEexProgram';
     $classes['WordPressEeoOpportunities'] = 'GovCMSMigrateWordPressEeoOpportunities';
+    $classes['WordPressAttachment'] = 'GovCMSMigrateWordPressAttachment';
+
     return $classes;
   }
 }

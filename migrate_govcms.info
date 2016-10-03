@@ -9,5 +9,6 @@ dependencies[] = migrate_extras
 files[] = includes/migrate_govcms.item.inc
 files[] = includes/migrate_govcms.taxonomy.inc
 files[] = includes/migrate_govcms.bundle.inc
+files[] = includes/migrate_govcms.attachment.inc
 files[] = includes/migrate_govcms.migrate.inc
 files[] = includes/migrate_govcms.wizard.inc
