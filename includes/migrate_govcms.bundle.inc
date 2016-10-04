@@ -143,7 +143,7 @@ class GovCMSMigrateWordPressEexEvent extends GovCMSMigrateWordPressBundle {
 
     $this->addFieldMapping('field_event_date', 'field_event_date')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_start_date\')]/following-sibling::wp:meta_value');
-    $this->addFieldMapping('field_event_date:to', 'field_event_date:to')
+    $this->addFieldMapping('field_event_date:to')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_end_date\')]/following-sibling::wp:meta_value');
     $this->addFieldMapping('field_event_location', 'field_event_location')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_address\')]/following-sibling::wp:meta_value');
