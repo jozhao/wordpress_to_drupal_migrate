@@ -24,6 +24,13 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
           'not null' => TRUE,
           'description' => 'WordPress term machine name',
         ),
+        'wp:term_slug' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'WordPress term machine name',
+          'default' => '',
+        ),
       ),
       MigrateDestinationTerm::getKeySchema()
     );
@@ -66,6 +73,21 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
     $this->addFieldMapping('path');
   }
 
+  public function prepareKey($source_key, $row) {
+    $key = array();
+
+    foreach ($source_key as $field_name => $field_schema) {
+      if ($field_name == 'wp:term_slug') {
+        $key[$field_name] = $this->xpathValue($row->xml->xpath('wp:term_slug'));
+      }
+      else {
+        $key[$field_name] = $row->$field_name;
+      }
+    }
+
+    return $key;
+  }
+
   /**
    * @param $row
    * @return bool
@@ -76,6 +98,8 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
     if (parent::prepareRow($row) === FALSE) {
       return FALSE;
     }
+
+    $row->{'wp:term_slug'} = $this->xpathValue($row->xml->xpath('wp:term_slug'));
 
     // Source is required in arguments.
     if (empty($this->arguments['source'])) {
