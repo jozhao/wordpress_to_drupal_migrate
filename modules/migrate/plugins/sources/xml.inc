@@ -1012,7 +1012,7 @@ class MigrateXMLReader implements Iterator {
   public function next() {
     migrate_instrument_start('MigrateXMLReader::next');
     $this->currentElement = $this->currentId = NULL;
-
+    drupal_set_time_limit(3600);
     // Loop over each node in the XML file, looking for elements at a path
     // matching the input query string (represented in $this->elementsToMatch).
     while ($this->reader->read()) {
