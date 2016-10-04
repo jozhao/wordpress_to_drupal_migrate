@@ -87,6 +87,9 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
       return TRUE;
     }
     else {
+      // Clean up not used values in map table; Or migration will be confused.
+      $this->skippedItems[] = $this->xpathValue($row->xml->xpath('wp:term_id'));
+
       return FALSE;
     }
   }
