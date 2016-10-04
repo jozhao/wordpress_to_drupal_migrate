@@ -221,4 +221,26 @@ class GovCMSMigrateWordPressWizardExtender extends MigrateUIWizardExtender {
   public function __construct(\GovCMSMigrateWordPressWizard $wizard, array $wizard_steps) {
     parent::__construct($wizard, $wizard_steps);
   }
+
+  /**
+   * @param string $machine_name
+   * @param string $class_name
+   * @param array $arguments
+   * @param \MigrateUIWizard $wizard
+   * @return bool
+   */
+  public function addMigrationAlter($machine_name, $class_name, &$arguments, $wizard) {
+    if ($machine_name == 'Attachment') {
+      $arguments['dependencies'][] = 'EexOpportunities';
+      $arguments['dependencies'][] = 'CaseStudies';
+      $arguments['dependencies'][] = 'Events';
+      $arguments['dependencies'][] = 'EexResources';
+      $arguments['dependencies'][] = 'EexContact';
+      $arguments['dependencies'][] = 'EexGlossary';
+      $arguments['dependencies'][] = 'Programs';
+      $arguments['dependencies'][] = 'EeoOpportunities';
+    }
+
+    return parent::addMigrationAlter($machine_name, $class_name, $arguments, $wizard);
+  }
 }
