@@ -390,7 +390,14 @@ class MigrateFileUri extends MigrateFile {
       $this->sourcePath = self::urlencode($this->sourcePath);
     }
     try {
-      $copied = copy($this->sourcePath, $destination);
+      $opts = array(
+        'ssl' => array(
+          'verify_peer' => FALSE,
+          'verify_peer_name' => FALSE,
+        ),
+      );
+      $context = stream_context_create($opts);
+      $copied = copy($this->sourcePath, $destination, $context);
       if ($copied == FALSE) {
         $migration = Migration::currentMigration();
         $migration->saveMessage(t('The specified file %file could not be copied to %destination',
