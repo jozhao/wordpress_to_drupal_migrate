@@ -88,13 +88,6 @@ class GovCMSMigrateWordPressItemMigration extends WordPressItemMigration {
     // Construct the source objects.
     $this->source = new GovCMSMigrateWordPressItemSource($this->wxrFile, $this->postType, $this->machineName, $this->arguments['namespaces']);
     $this->source->setBundle($this->arguments['bundle']);
-
-    $customFields = $this->source->getCustomFields();
-    if (!empty($customFields)) {
-      foreach ($customFields as $customField => $customFieldValues) {
-        $this->addFieldMapping($customField, $customField);
-      }
-    }
   }
 
   /**
