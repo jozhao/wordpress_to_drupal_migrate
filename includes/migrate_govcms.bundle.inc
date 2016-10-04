@@ -262,7 +262,20 @@ class GovCMSMigrateWordPressEexProgram extends GovCMSMigrateWordPressBundle {
       ->xpath('category[@domain="eex_location"]/@nicename');
     $this->addFieldMapping('field_locations:source_type')
       ->defaultValue('tid');
+  }
 
+  /**
+   * @param \stdClass $row
+   * @return bool
+   */
+  public function prepareRow($row) {
+    // Always include this fragment at the beginning of every prepareRow()
+    // implementation, so parent classes can ignore rows.
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 }
 

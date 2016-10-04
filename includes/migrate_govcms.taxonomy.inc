@@ -95,6 +95,21 @@ class GovCMSMigrateWordPressTaxonomy extends WordPressMigration {
   }
 
   /**
+   * @return bool
+   */
+  public function isComplete() {
+    $total = $this->sourceCount(TRUE);
+    // If the source is uncountable, we have no way of knowing if it's
+    // complete, so stipulate that it is.
+    if ($total < 0) {
+      return TRUE;
+    }
+    $processed = $this->processedCount();
+
+    return $processed > 0;
+  }
+
+  /**
    * Reruan xpath value.
    * @param $result
    * @return string
