@@ -140,6 +140,15 @@ class GovCMSMigrateWordPressEexEvent extends GovCMSMigrateWordPressBundle {
       ->xpath('category[@domain="eex_location"]/@nicename');
     $this->addFieldMapping('field_locations:source_type')
       ->defaultValue('tid');
+
+    $this->addFieldMapping('field_event_date', 'field_event_date')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_start_date\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_event_date:to', 'field_event_date:to')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_end_date\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_event_location', 'field_event_location')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_address\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_event_website', 'field_event_website')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_website\')]/following-sibling::wp:meta_value');
   }
 }
 
@@ -196,6 +205,13 @@ class GovCMSMigrateWordPressEexContact extends GovCMSMigrateWordPressBundle {
       ->xpath('category[@domain="eex_technology"]/@nicename');
     $this->addFieldMapping('field_technologies:source_type')
       ->defaultValue('tid');
+
+    $this->addFieldMapping('field_contact_website', 'field_contact_website')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_contact_website\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_contact_phone', 'field_contact_phone')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_contact_phone\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_contact_email', 'field_contact_email')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_contact_email\')]/following-sibling::wp:meta_value');
   }
 }
 
