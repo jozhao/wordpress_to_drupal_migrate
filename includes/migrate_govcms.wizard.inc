@@ -35,6 +35,138 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
   }
 
   /**
+   * Fetch and preprocess the uploaded WXR file.
+   *
+   * @param array $form_state
+   */
+  public function sourceDataFormValidate(&$form_state) {
+    if ($_FILES['files']['error']['wxr_file'] && empty($form_state['values']['domain'])) {
+      form_set_error('wxr_file', t('The file could not be uploaded, most likely
+        because the file size exceeds the configured limit of !filesize',
+        array('!filesize' => format_size(file_upload_max_size()))));
+
+      return;
+    }
+    $directory = 'wordpress://';
+    if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+      form_set_error('wxr_file',
+        t('Could not prepare directory %directory - make sure your Drupal files directory exists and is writable',
+          array('%directory' => $directory)));
+
+      return;
+    }
+
+    $tmpfile = $_FILES['files']['tmp_name']['wxr_file'];
+    // Note that for either path we take here, $tmpfile will be the name of
+    // the uploaded/retrieved file, and $destination will be the name of the
+    // desired final destination.
+    if ($tmpfile) {
+      // Handle uploaded file
+      $filename = $_FILES['files']['name']['wxr_file'];
+      $this->filename = $directory . str_replace(' ', '%20', $filename);
+    }
+    else {
+      // Export the WordPress blog directly
+      $domain = preg_replace('/http[s]?\:\/\//', '', $form_state['values']['domain']);
+
+      // Login to the WordPress site
+      $wordpress_version = 3;
+      $login_url = 'http://' . $domain . '/wp-login.php';
+      if (!($handle = fopen($login_url, 'r'))) {
+        $wordpress_version = 2;
+        $login_url = 'http://' . $domain . '/blog/wp-login.php';
+        $handle = fopen($login_url, 'r');
+      }
+      if (!$handle) {
+        form_set_error('credentials][domain', t('Could not find login page for !domain',
+          array('!domain' => $domain)));
+      }
+      fclose($handle);
+
+      // Use a temp file for cookies.
+      $cookie_file = file_directory_temp() . '/wpimport-cookie.txt';
+
+      $username = $form_state['values']['username'];
+      $password = $form_state['values']['password'];
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $login_url);
+      curl_setopt($ch, CURLOPT_HEADER, 1);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_USERAGENT, 'Importer');
+      curl_setopt($ch, CURLOPT_COOKIESESSION, 1);
+      curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file);
+      curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, "log=$username&pwd=$password&testcookie=1");
+      $login_result = curl_exec($ch);
+      curl_close($ch);
+
+      // Login successful? Grab the export
+      if ((strpos($login_result, 'Set-Cookie: wordpress_logged_in')) ||
+        (strpos($login_result, 'Set-Cookie: wordpressuser_')) ||
+        (strpos($login_result, 'Set-Cookie: wordpress_test_cookie'))
+      ) {
+        $filename = $domain . '.xml';
+        // The "domain" may have included a subdirectory - flatten things out
+        $this->filename = $directory . '/' . str_replace('/', '_', $filename);
+        $tmpfile = tempnam(sys_get_temp_dir(), 'wp_');
+        $export_url = 'http://' . $domain;
+        if ($wordpress_version == 2) {
+          $export_url .= '/blog';
+        }
+        $export_url .= '/wp-admin/export.php?mm_start=all&mm_end=all&author=all' .
+          '&export_taxonomy[category]=0&export_taxonomy[post_tag]=0&export_post_type=all' .
+          '&export_post_status=all&download=true';
+        $fp = fopen($tmpfile, 'w');
+        if ($fp) {
+          $ch = curl_init();
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt($ch, CURLOPT_FILE, $fp);
+          curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file);
+          curl_setopt($ch, CURLOPT_URL, $export_url);
+          curl_exec($ch);
+          curl_close($ch);
+          fclose($fp);
+          unlink($cookie_file);
+        }
+        else {
+          form_set_error('credentials][domain', t('Could not create destination file !filename',
+            array('!filename' => $tmpfile)));
+
+          return;
+        }
+      }
+      else {
+        form_set_error('credentials][domain', t('Could not login at !login_url',
+          array('!login_url' => $login_url)));
+
+        return;
+      }
+    }
+
+    $this->namespaces = WordPressBlog::preprocessFile($tmpfile, $this->filename);
+
+    // Only include the author step if we have author data (which was introduced
+    // in WXR 1.1)
+    $blog = wordpress_migrate_blog($this->filename);
+    if ($blog->getWxrVersion() != '1.0') {
+      $this->addStep(t('Authors'), 'authorForm', $this->currentStep);
+    }
+    else {
+      $this->authorMigration = FALSE;
+      global $user;
+      $this->defaultAuthorUid = $user->uid;
+    }
+    // Truncate the groupName so map/message table names don't get too long.
+    $this->groupName = substr($blog->getTitle(), 0, 63 - strlen('migrate_message_blogpostcomment'));
+    $this->groupTitle = t('!title (!url)',
+      array(
+        '!title' => $blog->getDisplayTitle(),
+        '!url' => $blog->getBlogUrl(),
+      ));
+  }
+
+  /**
    * Custom content types migrate form.
    *
    * @param $form_state
@@ -75,7 +207,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
    *
    * @param $form_state
    */
-  protected function customContentSelectFormValidate(&$form_state) {
+  public function customContentSelectFormValidate(&$form_state) {
     $site_info = migrate_govcms_site_info();
     foreach ($site_info['bundles'] as $bundle => $bundle_values) {
       $this->contentValues[$bundle][$bundle . '_type'] = $form_state['values'][$bundle . '_type'];
@@ -133,7 +265,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
    *
    * @param $form_state
    */
-  protected function customContentPageFormValidate(&$form_state) {
+  public function customContentPageFormValidate(&$form_state) {
     // Get context.
     $context = $form_state['wizard']->getCurrentStep()->getContext();
     // Save form values.
@@ -180,6 +312,14 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
         $class_name = array_values($bundles[$type]['migrate_class'])[0];
         // Add custom class into migration.
         $arguments = $this->contentValues[$type];
+        // Load default values for drush.
+        if (empty($arguments) || empty($arguments['text_format'])) {
+          if (!empty($bundles[$type]['migrate_arguments'])) {
+            foreach ($bundles[$type]['migrate_arguments'] as $aid => $argument) {
+              $arguments[$aid] = $argument;
+            }
+          }
+        }
         // Add dependencies.
         if (!empty($bundles[$type]['dependencies'])) {
           $arguments['dependencies'] = array('Author') + $bundles[$type]['dependencies'];

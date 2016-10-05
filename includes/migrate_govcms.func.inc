@@ -212,6 +212,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_class' => [
           'WordPressEexOpportunities' => 'GovCMSMigrateWordPressEexOpportunities',
         ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
+        ],
       ],
       'case_studies' => [
         'name' => 'Case studies',
@@ -228,6 +236,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_name' => 'CaseStudies',
         'migrate_class' => [
           'WordPressEexCaseStudy' => 'GovCMSMigrateWordPressEexCaseStudy',
+        ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
         ],
       ],
       'events' => [
@@ -252,6 +268,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_class' => [
           'WordPressEexEvent' => 'GovCMSMigrateWordPressEexEvent',
         ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
+        ],
       ],
       'additional_resources' => [
         'name' => 'Resources',
@@ -268,6 +292,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_name' => 'EexResources',
         'migrate_class' => [
           'WordPressEexResources' => 'GovCMSMigrateWordPressEexResources',
+        ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
         ],
       ],
       'contacts' => [
@@ -290,6 +322,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_class' => [
           'WordPressEexContact' => 'GovCMSMigrateWordPressEexContact',
         ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
+        ],
       ],
       'glossary' => [
         'name' => 'Glossary',
@@ -300,6 +340,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_name' => 'EexGlossary',
         'migrate_class' => [
           'WordPressGlossary' => 'GovCMSMigrateWordPressGlossary',
+        ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
         ],
       ],
       'programs' => [
@@ -319,6 +367,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_name' => 'Programs',
         'migrate_class' => [
           'WordPressEexProgram' => 'GovCMSMigrateWordPressEexProgram',
+        ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
         ],
       ],
       'eeo_opportunities' => [
@@ -341,6 +397,14 @@ function _migrate_govcms_get_site_info() {
         'migrate_class' => [
           'WordPressEeoOpportunities' => 'GovCMSMigrateWordPressEeoOpportunities',
         ],
+        'migrate_arguments' => [
+          'path_action' => 1,
+          'podcast_field' => '',
+          'comments' => '',
+          'attachment_field' => '',
+          'text_format' => 'rich_text',
+          'text_format_comment' => 'rich_text',
+        ],
       ],
     ],
   ];
@@ -357,20 +421,20 @@ function _migrate_govcms_default_site_info() {
   return [
     'source_select' => '0',
     'domain' => '',
-    'wxr_filename' => '',
-    'wxr_path' => 'public://migrate_govcms',
-    'do_migration' => 1,
-    'default_author' => 'govCMS',
+    'wxr_filename' => 'wordpress_export.xml',
+    'wxr_path' => 'public://migrate',
+    'do_migration' => 0,
+    'default_author' => 'admin',
     'page_type' => 'page',
     'blog_post_type' => 'blog_article',
     'path_action' => 1,
     'podcast_field' => '',
     'tag_field' => 'field_tags',
-    'category_field' => 'field_category',
+    'category_field' => 'field_categories',
     'generate_redirects' => '',
     'comments' => '',
     'attachment_field' => '',
     'text_format' => 'rich_text',
-    'text_format_comment' => 'filtered_html',
+    'text_format_comment' => 'rich_text',
   ];
 }
