@@ -26,6 +26,7 @@ function migrate_govcms_drush_command() {
  * Creating and Storing WordPress Migrate Migrations.
  */
 function drush_migrate_govcms_migrate_build() {
+  drush_log(dt('Start creating the migration.'), 'ok');
   // Reset the file_get_stream_wrappers static cache.
   $wrappers_storage = &drupal_static('file_get_stream_wrappers', NULL, TRUE);
 
@@ -37,8 +38,10 @@ function drush_migrate_govcms_migrate_build() {
   $site_info['default_author'] = 'Site Factory admin';
   $site_info['attachment_field'] = 'field_image';
 
+  drush_log(dt('Try to get XML file object information.'));
   $file_info = _migrate_govcms_file_object($site_info['wxr_file']);
 
+  drush_log(dt('Read to build migration instance.'));
   $_FILES['files']['tmp_name']['wxr_file'] = $file_info->uri;
   $_FILES['files']['name']['wxr_file'] = $file_info->filename;
   $_FILES['files']['error']['wxr_file'] = 0;
@@ -59,16 +62,19 @@ function drush_migrate_govcms_migrate_build() {
   $form_state['wizard'] = new GovCMSMigrateWordPressWizard();
   // Add migration extender.
   $form_state['wizard']->addExtender('GovCMSMigrateWordPressWizardExtender');
+  drush_log(dt('Start building migration instance file.'));
   $form_state['wizard']->sourceDataFormValidate($form_state);
   $form_state['wizard']->customContentSelectFormValidate($form_state);
+  drush_log(dt('Start building migration instance classes.'));
   $form_state['wizard']->reviewForm($form_state);
 
   // Submit the form.
+  drush_log(dt('Final step to save the migration settings.'));
   drupal_form_submit('migrate_ui_wizard', $form_state);
   // Save the settings into the wizard object.
   $form_state['wizard']->formSaveSettings();
   // Display success message.
-  drush_print(dt('The migration is created successfully.'));
+  drush_log(dt('The migration is created successfully.'), 'ok');
 }
 
 /**
