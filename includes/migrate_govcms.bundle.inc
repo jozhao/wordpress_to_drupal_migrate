@@ -19,6 +19,28 @@ class GovCMSMigrateWordPressBundle extends GovCMSMigrateWordPressItemMigration {
 }
 
 /**
+ * Class GovCMSMigrateWordPressBlogEntry
+ */
+class GovCMSMigrateWordPressBlogEntry extends GovCMSMigrateWordPressItemMigration {
+  /**
+   * GovCMSMigrateWordPressBlogEntry constructor.
+   * @param array $arguments
+   */
+  public function __construct(array $arguments) {
+    $arguments['bundle'] = $arguments['post_type'];
+    $arguments['post_type'] = 'post';
+    parent::__construct($arguments);
+
+    // Add custom taxonomy fields.
+    $this->addFieldMapping('field_industry_sectors', 'field_industry_sectors')
+      ->xpath('category[@domain="eex_industry"]');
+
+    $this->addFieldMapping('field_technologies', 'field_technologies')
+      ->xpath('category[@domain="eex_technology"]');
+  }
+}
+
+/**
  * Class GovCMSMigrateWordPressOpportunities.
  */
 class GovCMSMigrateWordPressEexOpportunities extends GovCMSMigrateWordPressBundle {
