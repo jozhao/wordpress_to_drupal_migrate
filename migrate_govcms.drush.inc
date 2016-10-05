@@ -41,7 +41,7 @@ function drush_migrate_govcms_migrate_build() {
   drush_log(dt('Try to get XML file object information.'));
   $file_info = _migrate_govcms_file_object($site_info['wxr_file']);
 
-  drush_log(dt('Read to build migration instance.'));
+  drush_log(dt('Ready to build migration instance.'));
   $_FILES['files']['tmp_name']['wxr_file'] = $file_info->uri;
   $_FILES['files']['name']['wxr_file'] = $file_info->filename;
   $_FILES['files']['error']['wxr_file'] = 0;
