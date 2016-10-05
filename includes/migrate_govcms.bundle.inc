@@ -16,6 +16,15 @@ class GovCMSMigrateWordPressBundle extends GovCMSMigrateWordPressItemMigration {
   public function __construct(array $arguments) {
     parent::__construct($arguments);
   }
+
+  /**
+   * Reruan xpath value.
+   * @param $result
+   * @return string
+   */
+  public function xpathValue($result) {
+    return (string) reset($result);
+  }
 }
 
 /**
@@ -135,12 +144,31 @@ class GovCMSMigrateWordPressEexEvent extends GovCMSMigrateWordPressBundle {
 
     $this->addFieldMapping('field_event_date', 'field_event_date')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_start_date\')]/following-sibling::wp:meta_value');
-    $this->addFieldMapping('field_event_date:to')
+    $this->addFieldMapping('field_event_date:to', 'field_event_date_to')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_end_date\')]/following-sibling::wp:meta_value');
     $this->addFieldMapping('field_event_location', 'field_event_location')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_address\') or contains(text(), \'eex_event_location\')]/following-sibling::wp:meta_value');
     $this->addFieldMapping('field_event_website', 'field_event_website')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_website\')]/following-sibling::wp:meta_value');
+  }
+
+  /**
+   * @param \stdClass $row
+   * @return bool|string
+   */
+  public function prepareRow($row) {
+    // Always include this fragment at the beginning of every prepareRow()
+    // implementation, so parent classes can ignore rows.
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
+
+    $row->field_event_date = drupal_json_encode([
+      'from' => $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_start_date\')]/following-sibling::wp:meta_value')),
+      'to' => $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'eex_event_end_date\')]/following-sibling::wp:meta_value')),
+    ]);
+
+    return TRUE;
   }
 }
 
