@@ -265,7 +265,8 @@ class GovCMSMigrateWordPressEeoOpportunities extends GovCMSMigrateWordPressBundl
 
     // Add custom taxonomy fields.
     $this->addFieldMapping('field_eeo_sector', 'field_eeo_sector')
-      ->xpath('category[@domain="eeo_sector"]');
+      ->xpath('category[@domain="eeo_sector"]')
+      ->callbacks('html_entity_decode');
 
     // Add custom taxonomy fields.
     $this->addFieldMapping('field_eeo_equipment_type', 'field_eeo_equipment_type')
