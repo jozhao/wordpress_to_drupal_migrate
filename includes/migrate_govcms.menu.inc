@@ -134,6 +134,8 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     // Always include this fragment at the beginning of every prepareRow()
     // implementation, so parent classes can ignore rows.
     if (parent::prepareRow($row) === FALSE) {
+      drupal_debug($row, 'prepareRow: return FALSE at beginning.');
+
       return FALSE;
     }
 
@@ -142,6 +144,8 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     if ($wp_row->post_type != 'nav_menu_item') {
       $this->skippedItems[] = $row->{'wp:post_id'};
 
+      // drupal_debug($row, 'prepareRow: return FALSE since the menu type is not nav_menu_item.');
+
       return FALSE;
     }
 
@@ -149,6 +153,7 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     $menu_name = $this->xpathValue($row->xml->xpath('category[@domain="nav_menu"]'));
     if ($menu_name != 'Main') {
       $this->skippedItems[] = $row->{'wp:post_id'};
+      drupal_debug($row, 'prepareRow: return FALSE since the menu is not Main.');
 
       return FALSE;
     }
@@ -156,18 +161,20 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     $menu_item_object = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_object\')]/following-sibling::wp:meta_value'));
     if ($menu_item_object != 'page') {
       $this->skippedItems[] = $row->{'wp:post_id'};
+      drupal_debug($row, 'prepareRow: return FALSE since the menu item object is not page');
+      drupal_debug($menu_item_object, 'prepareRow: $menu_item_object');
 
       return FALSE;
     }
 
     $menu_item_parent = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_menu_item_parent\')]/following-sibling::wp:meta_value'));
     $menu_item_object_id = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_object_id\')]/following-sibling::wp:meta_value'));
+    drupal_debug($menu_item_object_id, 'prepareRow: $menu_item_object_id');
 
     // Try to find node id.
     $source_migrates = ['eexgovauEnergyEfficiencyExchangePage'];
     $nid = $this->handleSourceMigration($source_migrates, $menu_item_object_id);
-    drupal_debug($menu_item_object_id, '$menu_item_object_id');
-    drupal_debug($nid, '$nid');
+    drupal_debug($nid, 'prepareRow: $nid');
     $node = node_load($nid);
     if (!$node) {
       $this->skippedItems[] = $row->{'wp:post_id'};
@@ -183,6 +190,8 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
 
       return FALSE;
     }
+
+    drupal_debug($row, 'prepareRow: return TRUE and set up this menu.');
 
     return TRUE;
   }
