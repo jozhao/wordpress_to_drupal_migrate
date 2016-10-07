@@ -58,7 +58,7 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
           'description' => 'WordPress post ID',
         ),
       ),
-      MigrateDestinationFile::getKeySchema()
+      MigrateDestinationMenuLinks::getKeySchema()
     );
 
     // Always main menu.
