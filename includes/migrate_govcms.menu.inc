@@ -70,13 +70,13 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     // Set link title as post title.
     $this->addFieldMapping('link_title', 'title')->xpath('title');
     // Internal.
-    $this->addFieldMapping('external')->defaultValue('0');
+    $this->addFieldMapping('external', 'external')->defaultValue('0');
     // Set expanded default.
     $this->addFieldMapping('expanded')->defaultValue('0');
     // Set menu weight.
     $this->addFieldMapping('weight', 'wp:menu_order')->xpath('wp:menu_order');
     // A flag to indicate that the user has manually created or edited.
-    $this->addFieldMapping('customized')->defaultValue('1');
+    $this->addFieldMapping('customized')->defaultValue('0');
     // Will be overridden automatically.
     $this->addFieldMapping('has_children')->defaultValue('0');
     // Will be overridden automatically.
@@ -98,5 +98,55 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
       'p9',
       'updated',
     ));
+  }
+
+  /**
+   * @param $row
+   */
+  public function prepareRow($row) {
+    $wp_row = $row->xml->children($this->arguments['namespaces']['wp']);
+    // Skip any of the wrong post type
+    if ($wp_row->post_type != 'nav_menu_item') {
+      $this->skippedItems[] = $row->{'wp:post_id'};
+
+      return FALSE;
+    }
+
+    // If the link has a query string, don't produce a path
+    $row->link = (string) $row->xml->link;
+    if (strpos($row->link, '?')) {
+      unset($row->link);
+    }
+    else {
+      // Otherwise, strip the domain portion of the URL
+      $matches = array();
+      if (preg_match('|https?://[^/]+/(.*)|', $row->link, $matches)) {
+        $row->link = $matches[1];
+        // Strip the last slash off of the URL (the Path module can't handle this)
+        $row->link = rtrim($row->link, '/');
+        // Convert the alias to the node path.
+        $node_path = drupal_get_normal_path($row->link);
+        // If is it external link.
+        if ($node_path == $row->link) {
+          $row->external = 1;
+        }
+        $row->link = $node_path;
+      }
+      else {
+        unset($row->link);
+      }
+    }
+
+    // Set menu link title if it is empty.
+    if (empty($row->title)) {
+      $row->title = 'test';
+    }
+
+    // Make sure we actually have a menu link.
+    if (!isset($row->link)) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 }
