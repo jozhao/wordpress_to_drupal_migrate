@@ -31,6 +31,33 @@ class GovCMSWordPressMenuLinksSource extends WordPressItemSource {
   public function __construct($filename, $cache_key) {
     parent::__construct($filename, 'nav_menu_item', $cache_key);
   }
+
+  /**
+   * Return a count of all available source records.
+   */
+  public function computeCount() {
+    $count = 0;
+    foreach ($this->sourceUrls as $url) {
+      $reader = new $this->readerClass($url, $this->elementQuery, $this->idQuery);
+      foreach ($reader as $element) {
+        // Only count relevant postType
+        $field = 'wp:post_type';
+
+        $post_type = current($element->xpath($field));
+
+        // Check menu name.
+        $menu = 'category[@domain="nav_menu"]';
+        $menu_name = current($element->xpath($menu));
+
+        // Hard code main menu here.
+        if ($post_type == $this->postType && $menu_name == 'Main') {
+          $count++;
+        }
+      }
+    }
+
+    return $count;
+  }
 }
 
 /**
@@ -104,6 +131,12 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
    * @param $row
    */
   public function prepareRow($row) {
+    // Always include this fragment at the beginning of every prepareRow()
+    // implementation, so parent classes can ignore rows.
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
+
     $wp_row = $row->xml->children($this->arguments['namespaces']['wp']);
     // Skip any of the wrong post type
     if ($wp_row->post_type != 'nav_menu_item') {
@@ -112,41 +145,54 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
       return FALSE;
     }
 
-    // If the link has a query string, don't produce a path
-    $row->link = (string) $row->xml->link;
-    if (strpos($row->link, '?')) {
-      unset($row->link);
-    }
-    else {
-      // Otherwise, strip the domain portion of the URL
-      $matches = array();
-      if (preg_match('|https?://[^/]+/(.*)|', $row->link, $matches)) {
-        $row->link = $matches[1];
-        // Strip the last slash off of the URL (the Path module can't handle this)
-        $row->link = rtrim($row->link, '/');
-        // Convert the alias to the node path.
-        $node_path = drupal_get_normal_path($row->link);
-        // If is it external link.
-        if ($node_path == $row->link) {
-          $row->external = 1;
-        }
-        $row->link = $node_path;
-      }
-      else {
-        unset($row->link);
-      }
+    // Skip if not main menu.
+    $menu_name = $this->xpathValue($row->xml->xpath('category[@domain="nav_menu"]'));
+    if ($menu_name != 'Main') {
+      $this->skippedItems[] = $row->{'wp:post_id'};
+
+      return FALSE;
     }
 
-    // Set menu link title if it is empty.
-    if (empty($row->title)) {
-      $row->title = 'test';
+    $menu_item_object = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_object\')]/following-sibling::wp:meta_value'));
+    if ($menu_item_object != 'page') {
+      $this->skippedItems[] = $row->{'wp:post_id'};
+
+      return FALSE;
     }
+
+    $menu_item_parent = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_menu_item_parent\')]/following-sibling::wp:meta_value'));
+    $menu_item_object_id = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_object_id\')]/following-sibling::wp:meta_value'));
+
+    // Try to find node id.
+    $source_migrates = ['eexgovauEnergyEfficiencyExchangePage'];
+    $nid = $this->handleSourceMigration($source_migrates, $menu_item_object_id);
+    drupal_debug($menu_item_object_id, '$menu_item_object_id');
+    drupal_debug($nid, '$nid');
+    $node = node_load($nid);
+    if (!$node) {
+      $this->skippedItems[] = $row->{'wp:post_id'};
+
+      return FALSE;
+    }
+    $row->link = 'node/' . $nid;
+    $row->title = $node->title;
 
     // Make sure we actually have a menu link.
-    if (!isset($row->link)) {
+    if (!isset($row->link) || empty($row->title)) {
+      $this->skippedItems[] = $row->{'wp:post_id'};
+
       return FALSE;
     }
 
     return TRUE;
+  }
+
+  /**
+   * Reruan xpath value.
+   * @param $result
+   * @return string
+   */
+  public function xpathValue($result) {
+    return (string) reset($result);
   }
 }
