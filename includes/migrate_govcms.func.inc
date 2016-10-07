@@ -407,6 +407,27 @@ function _migrate_govcms_get_site_info() {
         ],
       ],
     ],
+    'menus' => [
+      'main_menu' => [
+        'name' => 'Main menu',
+        'menu_name' => 'main_menu',
+        'source_name' => 'main',
+        'dependencies' => [
+          'EexOpportunities',
+          'CaseStudies',
+          'Events',
+          'EexResources',
+          'EexContact',
+          'EexGlossary',
+          'Programs',
+          'EeoOpportunities',
+        ],
+        'migrate_name' => 'MenuLinks',
+        'migrate_class' => [
+          'WordPressMenuLinks' => 'GovCMSMigrateWordPressMenuLinks',
+        ],
+      ],
+    ],
   ];
 
   return array_merge(_migrate_govcms_default_site_info(), $site_info);
@@ -423,7 +444,7 @@ function _migrate_govcms_default_site_info() {
     'domain' => '',
     'wxr_filename' => 'wordpress_export.xml',
     'wxr_path' => 'public://migrate',
-    'do_migration' => 0,
+    'do_migration' => 1,
     'default_author' => 'admin',
     'page_type' => 'page',
     'blog_post_type' => 'blog_article',

@@ -64,6 +64,11 @@ function drush_migrate_govcms_migrate_build() {
   $form_state['wizard']->addExtender('GovCMSMigrateWordPressWizardExtender');
   drush_log(dt('Start building migration instance file.'));
   $form_state['wizard']->sourceDataFormValidate($form_state);
+  drush_log(dt('Start adding migration bundles classes file.'));
+  $form_state['wizard']->authorFormValidate($form_state);
+  $form_state['wizard']->contentSelectFormValidate($form_state);
+  $form_state['wizard']->contentBlogPostFormValidate($form_state);
+  $form_state['wizard']->contentPageFormValidate($form_state);
   $form_state['wizard']->customContentSelectFormValidate($form_state);
   drush_log(dt('Start building migration instance classes.'));
   $form_state['wizard']->reviewForm($form_state);

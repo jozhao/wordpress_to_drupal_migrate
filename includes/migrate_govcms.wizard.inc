@@ -167,6 +167,60 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
   }
 
   /**
+   * Prepare for registration of any user-related migrations.
+   *
+   * @param array $form_state
+   */
+  public function authorFormValidate(&$form_state) {
+    if ($form_state['values']['do_migration']) {
+      $this->authorMigration = TRUE;
+    }
+    else {
+      $this->authorMigration = FALSE;
+    }
+    $account = user_load_by_name($form_state['values']['default_author']);
+    $this->defaultAuthorUid = $account->uid;
+  }
+
+  /**
+   * @param $form_state
+   */
+  public function contentSelectFormValidate(&$form_state) {
+    // Start clean in case we came here via Previous.
+    unset($this->contentValues['blog']);
+    unset($this->contentValues['page']);
+    $this->removeStep(t('Blog posts'));
+    $this->removeStep(t('Pages'));
+
+    $this->contentValues['page']['page_type'] = $form_state['values']['page_type'];
+    if ($this->contentValues['page']['page_type']) {
+      $this->addStep(t('Pages'), 'contentPageForm', $this->currentStep);
+    }
+    $this->contentValues['blog']['post_type'] = $form_state['values']['blog_post_type'];
+    if ($this->contentValues['blog']['post_type']) {
+      $this->addStep(t('Blog posts'), 'contentBlogPostForm', $this->currentStep);
+    }
+  }
+
+  /**
+   * Save the selected type mappings, as an array keyed by source type and
+   * containing the destination type (bundle).
+   */
+  public function contentBlogPostFormValidate(&$form_state) {
+    $this->contentValues['blog'] += $form_state['values'];
+  }
+
+  /**
+   * Save the selected type mappings, as an array keyed by source type and
+   * containing the destination type (bundle).
+   */
+  public function contentPageFormValidate(&$form_state) {
+    $this->contentValues['page'] += $form_state['values'];
+    $this->contentValues['page']['tag_field'] = '';
+    $this->contentValues['page']['category_field'] = '';
+  }
+
+  /**
    * Custom content types migrate form.
    *
    * @param $form_state
@@ -286,6 +340,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
     // Get vocabularies.
     $vocabularies = !empty($site_info['taxonomy']) ? $site_info['taxonomy'] : NULL;
     $bundles = !empty($site_info['bundles']) ? $site_info['bundles'] : NULL;
+    $menus = !empty($site_info['menus']) ? $site_info['menus'] : NULL;
     // Init migration message.
     $message = '';
 
@@ -321,12 +376,35 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
           }
         }
         // Add dependencies.
+        $arguments['dependencies'][] = 'Author';
         if (!empty($bundles[$type]['dependencies'])) {
-          $arguments['dependencies'] = array('Author') + $bundles[$type]['dependencies'];
+          $arguments['dependencies'] = array_merge($arguments['dependencies'], $bundles[$type]['dependencies']);
         }
         $this->addMigration($bundles[$type]['migrate_name'], $class_name, $arguments);
         // Add into review list.
         $message .= t('<li>@type will be imported.</li>', ['@type' => $bundles[$type]['name']]);
+      }
+    }
+
+    // Add menus migration.
+    if (!empty($menus)) {
+      foreach ($menus as $menu => $menu_values) {
+        $class_name = array_values($menu_values['migrate_class'])[0];
+        $arguments = [
+          'menu_name' => $menu_values['menu_name'],
+          'source' => $menu_values['source_name'],
+        ];
+        // Add dependencies.
+        if ($this->contentValues['blog']['post_type']) {
+          $arguments['dependencies'][] = 'BlogPost';
+        }
+        if ($this->contentValues['page']['page_type']) {
+          $arguments['dependencies'][] = 'Page';
+        }
+        if (!empty($menu_values['dependencies'])) {
+          $arguments['dependencies'] = array_merge($arguments['dependencies'], $menu_values['dependencies']);
+        }
+        $this->addMigration($menu_values['migrate_name'], $class_name, $arguments);
       }
     }
 
