@@ -208,6 +208,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
    */
   public function contentBlogPostFormValidate(&$form_state) {
     $this->contentValues['blog'] += $form_state['values'];
+    $this->contentValues['blog']['attachment_field'] = 'field_thumbnail';
   }
 
   /**
@@ -218,6 +219,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
     $this->contentValues['page'] += $form_state['values'];
     $this->contentValues['page']['tag_field'] = '';
     $this->contentValues['page']['category_field'] = '';
+    $this->contentValues['page']['attachment_field'] = 'field_feature_image';
   }
 
   /**
