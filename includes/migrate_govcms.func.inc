@@ -408,9 +408,9 @@ function _migrate_govcms_get_site_info() {
       ],
     ],
     'menus' => [
-      'main_menu' => [
+      'main-menu' => [
         'name' => 'Main menu',
-        'menu_name' => 'main_menu',
+        'menu_name' => 'main-menu',
         'source_name' => 'main',
         'dependencies' => [
           'EexOpportunities',
