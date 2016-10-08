@@ -158,7 +158,7 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
       return FALSE;
     }
 
-    $menu_item_object = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_object\')]/following-sibling::wp:meta_value'));
+    $menu_item_object = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[.=\'_menu_item_object\']/following-sibling::wp:meta_value'));
     if ($menu_item_object != 'page') {
       $this->skippedItems[] = $row->{'wp:post_id'};
       drupal_debug($row, 'prepareRow: return FALSE since the menu item object is not page');
@@ -202,6 +202,11 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
    * @return string
    */
   public function xpathValue($result) {
-    return (string) reset($result);
+    if (is_array($result)) {
+      return (string) reset($result);
+    }
+    else {
+      return (string) $result;
+    }
   }
 }
