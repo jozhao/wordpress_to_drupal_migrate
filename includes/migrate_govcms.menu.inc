@@ -90,6 +90,10 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
 
     // Always main menu.
     $this->addFieldMapping('menu_name')->defaultValue('main-menu');
+    // Set up menu parent.
+    $this->addFieldMapping('plid', 'menu_parent')
+      ->defaultValue('0')
+      ->sourceMigration($this->getMachineName());
     // Path of the link.
     $this->addFieldMapping('link_path', 'link');
     // Set this path to node path.
@@ -125,6 +129,63 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
       'p9',
       'updated',
     ));
+
+    // Set not migration field.
+    $this->addFieldMapping(NULL, 'guid')
+      ->description('same as link, plus isPermaLink attribute?')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'description')
+      ->description('Always empty?')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'content:encoded')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'content')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'pubDate')
+      ->description('Use post_date')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'dc:creator')
+      ->description('Not with Menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:post_id')
+      ->description('Not with Menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:post_date')
+      ->description('Not with Menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:post_date_gmt')
+      ->description('Not with Menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:comment_status')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:ping_status')
+      ->description('What does this mean?')
+      ->issueGroup(t('Open issues'))
+      ->issuePriority(MigrateFieldMapping::ISSUE_PRIORITY_MEDIUM);
+    $this->addFieldMapping(NULL, 'wp:post_name')
+      ->description('Looks like last component of path')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:post_parent')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:post_type')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:post_password')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'wp:is_sticky')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'category')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
+    $this->addFieldMapping(NULL, 'tag')
+      ->description('Not with menu')
+      ->issueGroup(t('DNM'));
   }
 
   /**
@@ -161,20 +222,16 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     $menu_item_object = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[.=\'_menu_item_object\']/following-sibling::wp:meta_value'));
     if ($menu_item_object != 'page') {
       $this->skippedItems[] = $row->{'wp:post_id'};
-      drupal_debug($row, 'prepareRow: return FALSE since the menu item object is not page');
-      drupal_debug($menu_item_object, 'prepareRow: $menu_item_object');
 
       return FALSE;
     }
 
     $menu_item_parent = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_menu_item_parent\')]/following-sibling::wp:meta_value'));
     $menu_item_object_id = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_object_id\')]/following-sibling::wp:meta_value'));
-    drupal_debug($menu_item_object_id, 'prepareRow: $menu_item_object_id');
 
     // Try to find node id.
     $source_migrates = ['eexgovauEnergyEfficiencyExchangePage'];
     $nid = $this->handleSourceMigration($source_migrates, $menu_item_object_id);
-    drupal_debug($nid, 'prepareRow: $nid');
     $node = node_load($nid);
     if (!$node) {
       $this->skippedItems[] = $row->{'wp:post_id'};
@@ -184,14 +241,15 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     $row->link = 'node/' . $nid;
     $row->title = $node->title;
 
+    // Set up menu parent.
+    $row->menu_parent = !empty($menu_item_parent) ? $menu_item_parent : '0';
+
     // Make sure we actually have a menu link.
     if (!isset($row->link) || empty($row->title)) {
       $this->skippedItems[] = $row->{'wp:post_id'};
 
       return FALSE;
     }
-
-    drupal_debug($row, 'prepareRow: return TRUE and set up this menu.');
 
     return TRUE;
   }
