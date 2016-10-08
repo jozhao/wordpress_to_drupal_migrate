@@ -219,7 +219,7 @@ class GovCMSMigrateWordPressWizard extends WordPressMigrateWizard {
     $this->contentValues['page'] += $form_state['values'];
     $this->contentValues['page']['tag_field'] = '';
     $this->contentValues['page']['category_field'] = '';
-    $this->contentValues['page']['attachment_field'] = 'field_feature_image';
+    $this->contentValues['page']['attachment_field'] = 'field_image';
   }
 
   /**
