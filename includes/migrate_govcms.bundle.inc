@@ -28,6 +28,44 @@ class GovCMSMigrateWordPressBundle extends GovCMSMigrateWordPressItemMigration {
 }
 
 /**
+ * Class GovCMSMigrateWordPressPage.
+ */
+class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
+  /**
+   * GovCMSMigrateWordPressPage constructor.
+   * @param array $arguments
+   */
+  public function __construct(array $arguments) {
+    $arguments['bundle'] = $arguments['page_type'];
+    $arguments['post_type'] = 'page';
+    parent::__construct($arguments);
+  }
+
+  /**
+   * @param \stdClass $node
+   * @param \stdClass $row
+   */
+  public function complete(stdClass $node, stdClass $row) {
+    // Migrate paragraphs fields.
+    if (module_exists('paragraphs')) {
+      drupal_debug($node, 'Page bundle: node object');
+      if (isset($node->field_paragraphs_resources)) {
+        $paragraph = new ParagraphsItemEntity(array(
+          'field_name' => 'field_paragraphs_resources',
+          'bundle' => 'paragraph_section_sub_pages',
+        ));
+        $paragraph->is_new = TRUE;
+        $paragraph->setHostEntity('node', $node);
+        $paragraph->field_sub_page_parent_reference[LANGUAGE_NONE][0]['value'] = '46';
+        $paragraph->save();
+      }
+    }
+
+    parent::complete($node, $row);
+  }
+}
+
+/**
  * Class GovCMSMigrateWordPressBlogEntry
  */
 class GovCMSMigrateWordPressBlogEntry extends GovCMSMigrateWordPressItemMigration {
