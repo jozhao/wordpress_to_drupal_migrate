@@ -1,6 +1,6 @@
 name = "WordPress to govCMS migration"
 description = "Migrate WordPress content to govCMS site"
-package = "govCMS"
+package = "Migration"
 core = 7.x
 
 dependencies[] = migrate_wordpress
