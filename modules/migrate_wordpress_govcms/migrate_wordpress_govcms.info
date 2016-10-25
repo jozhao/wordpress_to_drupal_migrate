@@ -4,3 +4,11 @@ package = "govCMS"
 core = 7.x
 
 dependencies[] = migrate_wordpress
+
+files[] = includes/migrate_wordpress_govcms.migrate.inc
+files[] = includes/migrate_wordpress_govcms.wizard.inc
+files[] = includes/migrate_wordpress_govcms.item.inc
+files[] = includes/migrate_wordpress_govcms.taxonomy.inc
+files[] = includes/migrate_wordpress_govcms.bundle.inc
+files[] = includes/migrate_wordpress_govcms.attachment.inc
+files[] = includes/migrate_wordpress_govcms.menu.inc

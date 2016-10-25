@@ -16,9 +16,18 @@ function migrate_wordpress_site_info() {
     // Load module inc file.
     module_load_include('inc', 'migrate_wordpress', 'includes/migrate_wordpress.func');
     $site_info = _migrate_wordpress_get_site_info();
+    // Allow other modules to alter the site info.
+    drupal_alter('migrate_wordpress_site_info', $site_info);
   }
 
   return $site_info;
+}
+
+/**
+ * Implements hook_migrate_api_alter().
+ */
+function migrate_wordpress_migrate_api_alter(array &$info) {
+  $info['wordpress_migrate']['wizard classes'] = ['MigrateWordPressWizard'];
 }
 
 /**
@@ -28,7 +37,7 @@ function migrate_wordpress_migrate_api() {
   $api = [
     'api' => 2,
     'wizard extenders' => [
-      'GovCMSMigrateWordPressWizard' => ['GovCMSMigrateWordPressWizardExtender'],
+      'MigrateWordPressWizard' => ['MigrateWordPressWizardExtender'],
     ],
   ];
 
@@ -36,18 +45,11 @@ function migrate_wordpress_migrate_api() {
 }
 
 /**
- * Implements hook_migrate_api_alter().
- */
-function migrate_wordpress_migrate_api_alter(array &$info) {
-  $info['wordpress_migrate']['wizard classes'] = ['GovCMSMigrateWordPressWizard'];
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function migrate_wordpress_form_migrate_ui_wizard_alter(&$form, &$form_state) {
   if (!empty($form['actions']['finish'])) {
-    $extender = $form_state['wizard']->getExtender('GovCMSMigrateWordPressWizardExtender');
+    $extender = $form_state['wizard']->getExtender('MigrateWordPressWizardExtender');
     if ($extender) {
       // Placeholder for more functions.
     }
