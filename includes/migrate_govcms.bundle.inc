@@ -48,7 +48,6 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
   public function complete(stdClass $node, stdClass $row) {
     // Migrate paragraphs fields.
     if (module_exists('paragraphs')) {
-      drupal_debug($node, 'Page bundle: node object');
       if (isset($node->field_paragraphs_resources)) {
         $paragraph = new ParagraphsItemEntity(array(
           'field_name' => 'field_paragraphs_resources',

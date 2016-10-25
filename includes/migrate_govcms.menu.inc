@@ -195,7 +195,7 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     // Always include this fragment at the beginning of every prepareRow()
     // implementation, so parent classes can ignore rows.
     if (parent::prepareRow($row) === FALSE) {
-      drupal_debug($row, 'prepareRow: return FALSE at beginning.');
+      // drupal_debug($row, 'prepareRow: return FALSE at beginning.');
 
       return FALSE;
     }
@@ -214,7 +214,7 @@ class GovCMSMigrateWordPressMenuLinks extends WordPressMigration {
     $menu_name = $this->xpathValue($row->xml->xpath('category[@domain="nav_menu"]'));
     if ($menu_name != 'Main') {
       $this->skippedItems[] = $row->{'wp:post_id'};
-      drupal_debug($row, 'prepareRow: return FALSE since the menu is not Main.');
+      // drupal_debug($row, 'prepareRow: return FALSE since the menu is not Main.');
 
       return FALSE;
     }
