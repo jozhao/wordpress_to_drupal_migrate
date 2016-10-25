@@ -111,10 +111,11 @@ class MigrateWordPressTaxonomy extends WordPressMigration {
       return FALSE;
     }
 
+    // Set term slug.
+    $row->{'wp:term_slug'} = $this->xpathValue($row->xml->xpath('wp:term_slug'));
+
     // Check if source is equal to term taxonomy.
     if ($this->arguments['source'] == $this->xpathValue($row->xml->xpath('wp:term_taxonomy'))) {
-      $row->{'wp:term_slug'} = $this->xpathValue($row->xml->xpath('wp:term_slug'));
-
       return TRUE;
     }
     else {
