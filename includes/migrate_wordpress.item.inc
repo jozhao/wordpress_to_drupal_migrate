@@ -86,6 +86,7 @@ class MigrateWordPressItemMigration extends WordPressItemMigration {
    * @param array $arguments
    */
   public function __construct(array $arguments) {
+    $arguments['generate_redirects'] = !empty($arguments['generate_redirects']) ? $arguments['generate_redirects'] : '';
     parent::__construct($arguments);
 
     // Construct the source objects.

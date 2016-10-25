@@ -8,7 +8,7 @@
 /**
  * Implements hook_drush_command().
  */
-function migrate_wordpress_drush_command() {
+function migrate_wordpress_govcms_drush_command() {
   $items = [];
 
   $items['migrate-wordpress-build-govcms'] = [
@@ -26,7 +26,7 @@ function migrate_wordpress_drush_command() {
 /**
  * Creating and Storing WordPress Migrate Migrations.
  */
-function drush_migrate_wordpress_build_govcms() {
+function drush_migrate_wordpress_govcms_migrate_wordpress_build_govcms() {
   drush_log(dt('Start creating the migration.'), 'ok');
   // Reset the file_get_stream_wrappers static cache.
   $wrappers_storage = &drupal_static('file_get_stream_wrappers', NULL, TRUE);
