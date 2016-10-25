@@ -1,9 +1,14 @@
 <?php
 
 /**
+ * @file
+ * Attachment migration.
+ */
+
+/**
  * Class GovCMSMigrateWordPressAttachment.
  */
-class GovCMSMigrateWordPressAttachment extends WordPressAttachment {
+class GovCMSMigrateWordPressAttachment extends MigrateWordPressAttachment {
   /**
    * GovCMSMigrateWordPressAttachment constructor.
    * @param array $arguments
