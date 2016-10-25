@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install file for migrate module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function migrate_wordpress_install() {
+  // Set the migrate class.
+  variable_set('migrate_wordpress_debug', 0);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function migrate_wordpress_uninstall() {
+  // Delete the custom module variables.
+  variable_del('migrate_wordpress_debug');
+}

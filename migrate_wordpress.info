@@ -1,0 +1,15 @@
+name = "Advanced Migration from WordPress"
+description = "Migrate WordPress content to Drupal"
+package = "Migration"
+core = 7.x
+
+dependencies[] = wordpress_migrate
+dependencies[] = migrate_extras
+
+files[] = includes/migrate_wordpress.item.inc
+files[] = includes/migrate_wordpress.taxonomy.inc
+files[] = includes/migrate_wordpress.bundle.inc
+files[] = includes/migrate_wordpress.attachment.inc
+files[] = includes/migrate_wordpress.menu.inc
+files[] = includes/migrate_wordpress.migrate.inc
+files[] = includes/migrate_wordpress.wizard.inc

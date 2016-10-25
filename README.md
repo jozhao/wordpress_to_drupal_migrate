@@ -3,10 +3,10 @@ Migrate content from external WordPress to Drupal (7.x) govCMS.
 
 This project provides an example on how to migrate custom content types contents, fields and vocabularies from WordPress to Drupal (7.x).
 
-A drush command can also be used for creating the migration instance. Please check migrate_govcms.drush.inc file for details.
+A drush command can also be used for creating the migration instance. Please check migrate_wordpress.drush.inc file for details.
 
 ##Installation
-Just download and activate this module ("migrate_govcms") as normal.
+Just download and activate this module ("migrate_wordpress") as normal.
 
 ###Target Drupal/govCMS site preparation
 - Set up content types, fields and vocabularies (tags, categories etc.) before migration.
