@@ -8,7 +8,7 @@
 /**
  * Class GovCMSMigrateWordPress.
  */
-class GovCMSMigrateWordPress extends WordPressBlog {
+class GovCMSMigrateWordPress extends MigrateWordPress {
   /**
    * Register migration classes.
    */
