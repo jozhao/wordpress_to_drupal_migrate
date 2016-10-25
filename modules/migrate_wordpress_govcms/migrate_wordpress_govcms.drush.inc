@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Drush helper.
  */
 
@@ -10,13 +11,13 @@
 function migrate_wordpress_drush_command() {
   $items = [];
 
-  $items['migrate-govcms-migrate-build'] = [
-    'description' => 'Creates the WordPress migrations',
+  $items['migrate-wordpress-build-govcms'] = [
+    'description' => 'Create the WordPress migrations',
     'examples' => array(
-      'migrate-govcms-migrate-build' => 'Creates the WordPress migrations',
+      'migrate-wordpress-build-govcms' => 'Create the WordPress migrations',
     ),
     'drupal dependencies' => array('migrate_wordpress'),
-    'aliases' => array('mgmb'),
+    'aliases' => array('mwbg'),
   ];
 
   return $items;
@@ -25,7 +26,7 @@ function migrate_wordpress_drush_command() {
 /**
  * Creating and Storing WordPress Migrate Migrations.
  */
-function drush_migrate_wordpress_migrate_build() {
+function drush_migrate_wordpress_build_govcms() {
   drush_log(dt('Start creating the migration.'), 'ok');
   // Reset the file_get_stream_wrappers static cache.
   $wrappers_storage = &drupal_static('file_get_stream_wrappers', NULL, TRUE);

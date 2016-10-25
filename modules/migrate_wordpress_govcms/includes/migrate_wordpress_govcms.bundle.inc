@@ -8,22 +8,14 @@
 /**
  * Class GovCMSMigrateWordPressBundle.
  */
-class GovCMSMigrateWordPressBundle extends GovCMSMigrateWordPressItemMigration {
+class GovCMSMigrateWordPressBundle extends MigrateWordPressBundle {
   /**
-   * GovCMSMigrateWordPressBundle constructor.
-   * @param array $arguments
+   * Prepare source row.
+   * @param \stdClass $row
+   * @return bool|string
    */
-  public function __construct(array $arguments) {
-    parent::__construct($arguments);
-  }
-
-  /**
-   * Reruan xpath value.
-   * @param $result
-   * @return string
-   */
-  public function xpathValue($result) {
-    return (string) reset($result);
+  public function prepareRow($row) {
+    return parent::prepareRow($row);
   }
 }
 
