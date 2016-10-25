@@ -15,5 +15,8 @@ class GovCMSMigrateWordPressAttachment extends MigrateWordPressAttachment {
    */
   public function __construct(array $arguments) {
     parent::__construct($arguments);
+
+    $this->addFieldMapping('file_replace')
+      ->defaultValue(FILE_EXISTS_REPLACE);
   }
 }
