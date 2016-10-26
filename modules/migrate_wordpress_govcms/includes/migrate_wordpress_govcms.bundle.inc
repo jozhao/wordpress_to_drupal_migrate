@@ -34,25 +34,29 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
   }
 
   /**
-   * @param \stdClass $node
+   * Prepare the row.
    * @param \stdClass $row
+   * @return bool|string
    */
-  public function complete(stdClass $node, stdClass $row) {
-    // Migrate paragraphs fields.
-    if (module_exists('paragraphs')) {
-      if (isset($node->field_paragraphs_resources)) {
-        $paragraph = new ParagraphsItemEntity(array(
-          'field_name' => 'field_paragraphs_resources',
-          'bundle' => 'paragraph_section_sub_pages',
-        ));
-        $paragraph->is_new = TRUE;
-        $paragraph->setHostEntity('node', $node);
-        $paragraph->field_sub_page_parent_reference[LANGUAGE_NONE][0]['value'] = '46';
-        $paragraph->save();
-      }
+  public function prepareRow($row) {
+    // Always include this fragment at the beginning of every prepareRow()
+    // implementation, so parent classes can ignore rows.
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
     }
 
-    parent::complete($node, $row);
+    // Fetch content from WordPress directly.
+    try {
+      $wp_link = (string) $row->xml->link;;
+      $wp_link = str_replace('http://', 'https://', $wp_link);
+
+      $wp_post = htmlqp($wp_link, 'div.entry-content');
+      $row->content = $wp_post->html();
+    } catch (Exception $exception) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 }
 

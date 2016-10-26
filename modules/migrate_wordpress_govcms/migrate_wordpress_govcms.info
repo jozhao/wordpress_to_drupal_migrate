@@ -4,6 +4,7 @@ package = "Migration"
 core = 7.x
 
 dependencies[] = migrate_wordpress
+dependencies[] = querypath
 
 files[] = includes/migrate_wordpress_govcms.migrate.inc
 files[] = includes/migrate_wordpress_govcms.wizard.inc
