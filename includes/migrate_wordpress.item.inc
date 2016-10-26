@@ -131,6 +131,8 @@ class MigrateWordPressItemMigration extends WordPressItemMigration {
     $row->content = preg_replace_callback('|(\[quote.*?\])(.*?)(\[/quote\])|i',
       array($this, 'replaceQuotes'), $row->content);
 
+    $row->content = $this->nl2p($row->content);
+
     return TRUE;
   }
 
@@ -153,5 +155,22 @@ class MigrateWordPressItemMigration extends WordPressItemMigration {
     $result .= '</blockquote>';
 
     return $result;
+  }
+
+  /**
+   * Return p tag.
+   * @param $string
+   * @return mixed
+   */
+  protected function nl2p($string) {
+    /* Explode based on new-line */
+    $string_parts = explode("\n", $string);
+
+    /* Wrap each block in a p tag */
+    $string = '<p>' . implode('</p><p>', $string_parts) . '</p>';
+
+    /* Return the string with empty paragraphs removed */
+
+    return str_replace("<p></p>", '', $string);
   }
 }
