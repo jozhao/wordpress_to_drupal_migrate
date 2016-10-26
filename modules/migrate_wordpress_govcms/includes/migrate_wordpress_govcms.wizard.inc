@@ -458,7 +458,6 @@ class GovCMSMigrateWordPressWizardExtender extends MigrateUIWizardExtender {
       $arguments['dependencies'][] = 'EexContact';
       $arguments['dependencies'][] = 'EexGlossary';
       $arguments['dependencies'][] = 'Programs';
-      $arguments['dependencies'][] = 'EeoOpportunities';
     }
 
     return parent::addMigrationAlter($machine_name, $class_name, $arguments, $wizard);

@@ -374,35 +374,6 @@ function migrate_wordpress_govcms_migrate_wordpress_site_info_alter(&$site_info)
           'text_format_comment' => 'rich_text',
         ],
       ],
-      'eeo_opportunities' => [
-        'name' => 'EEO Opportunities',
-        'bundle_name' => 'eeo_opportunities',
-        'source_name' => 'eeo_opportunity',
-        'fields' => [
-          'field_eeo_sector',
-          'field_eeo_equipment_type',
-          'field_eeo_opportunity_type',
-          'field_eeo_business_response',
-        ],
-        'dependencies' => [
-          'TaxonomySector',
-          'TaxonomyEquipmentType',
-          'TaxonomyOpportunityType',
-          'TaxonomyEeoBusinessResponse',
-        ],
-        'migrate_name' => 'EeoOpportunities',
-        'migrate_class' => [
-          'WordPressEeoOpportunities' => 'GovCMSMigrateWordPressEeoOpportunities',
-        ],
-        'migrate_arguments' => [
-          'path_action' => 1,
-          'podcast_field' => '',
-          'comments' => '',
-          'attachment_field' => '',
-          'text_format' => 'rich_text',
-          'text_format_comment' => 'rich_text',
-        ],
-      ],
     ],
     'menus' => [
       'main-menu' => [
@@ -417,7 +388,6 @@ function migrate_wordpress_govcms_migrate_wordpress_site_info_alter(&$site_info)
           'EexContact',
           'EexGlossary',
           'Programs',
-          'EeoOpportunities',
         ],
         'migrate_name' => 'MenuLinks',
         'migrate_class' => [
