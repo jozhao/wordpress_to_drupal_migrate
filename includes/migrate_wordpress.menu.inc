@@ -245,6 +245,7 @@ class MigrateWordPressMenuLinks extends WordPressMigration {
 
     $menu_item_parent = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_menu_item_parent\')]/following-sibling::wp:meta_value'));
     $menu_item_object_id = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_menu_item_object_id\')]/following-sibling::wp:meta_value'));
+    $menu_item_name = $this->xpathValue($row->xml->xpath('title'));
 
     // Try to find node id.
     $source_migrates = $this->dependencies;
@@ -256,7 +257,7 @@ class MigrateWordPressMenuLinks extends WordPressMigration {
       return FALSE;
     }
     $row->link = 'node/' . $nid;
-    $row->title = $node->title;
+    $row->title = !empty($menu_item_name) ? $menu_item_name : $node->title;
 
     // Set up menu parent.
     $row->menu_parent = !empty($menu_item_parent) ? $menu_item_parent : '0';
