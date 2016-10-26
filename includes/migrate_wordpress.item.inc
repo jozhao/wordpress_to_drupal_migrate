@@ -113,8 +113,10 @@ class MigrateWordPressItemMigration extends WordPressItemMigration {
       '[/info]' => '</div>',
       '[highlight]' => '<div class="highlight">',
       '[/highlight]' => '</div>',
-      '[quote]' => '<div class="quote">',
-      '[/quote]' => '</div>',
+      '[threecol_one]' => '<div class="threecol-one">',
+      '[/threecol_one]' => '</div>',
+      '[threecol_one_last]' => '<div class="threecol-one last">',
+      '[/threecol_one_last]' => '</div>',
       '[line]' => '<div class="line_shortcut" style="padding-top:0px; padding-bottom:0px;"></div>',
       '<h1' => '<h2',
       '</h1>' => '</h2>',
@@ -125,6 +127,31 @@ class MigrateWordPressItemMigration extends WordPressItemMigration {
     ];
     $row->content = str_replace(array_keys($replacements), $replacements, $row->content);
 
+    // Interpret the [quote] tags
+    $row->content = preg_replace_callback('|(\[quote.*?\])(.*?)(\[/quote\])|i',
+      array($this, 'replaceQuotes'), $row->content);
+
     return TRUE;
+  }
+
+  /**
+   * Interpret quote tags.
+   * @param array $matches
+   * @return string
+   */
+  protected function replaceQuotes(array $matches) {
+    $quote_open = $matches[1];
+    $content = $matches[2];
+    $quote_close = $matches[3];
+
+    preg_match('|cite=\s?"(.*?)"|i', $quote_open, $matches);
+    $cite = $matches[1];
+
+    $result = '<blockquote>';
+    $result .= $content;
+    $result .= '<p class="bc-cite">' . $cite . '</p>';
+    $result .= '</blockquote>';
+
+    return $result;
   }
 }
