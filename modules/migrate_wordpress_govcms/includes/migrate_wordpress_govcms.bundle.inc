@@ -148,6 +148,15 @@ class GovCMSMigrateWordPressEexCaseStudy extends GovCMSMigrateWordPressBundle {
 
     $this->addFieldMapping('field_technologies', 'field_technologies')
       ->xpath('category[@domain="eex_technology"]');
+
+    // Add custom resource fields.
+    $this->addFieldMapping('field_resource_source', 'field_resource_source')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_case_study_source\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_resource_year', 'field_resource_year')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_case_study_year\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_link_to_default_file', 'field_link_to_default_file')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_case_study_link_to_file\')]/following-sibling::wp:meta_value')
+      ->defaultValue('1');
   }
 
   /**
@@ -249,6 +258,15 @@ class GovCMSMigrateWordPressEexResources extends GovCMSMigrateWordPressBundle {
 
     $this->addFieldMapping('field_technologies', 'field_technologies')
       ->xpath('category[@domain="eex_technology"]');
+
+    // Add custom resource fields.
+    $this->addFieldMapping('field_resource_source', 'field_resource_source')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_resource_source\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_resource_year', 'field_resource_year')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_resource_year\')]/following-sibling::wp:meta_value');
+    $this->addFieldMapping('field_link_to_default_file', 'field_link_to_default_file')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_resource_link_to_file\')]/following-sibling::wp:meta_value')
+      ->defaultValue('1');
   }
 }
 
