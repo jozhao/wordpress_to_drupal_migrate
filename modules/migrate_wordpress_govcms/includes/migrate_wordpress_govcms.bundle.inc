@@ -149,6 +149,31 @@ class GovCMSMigrateWordPressEexCaseStudy extends GovCMSMigrateWordPressBundle {
     $this->addFieldMapping('field_technologies', 'field_technologies')
       ->xpath('category[@domain="eex_technology"]');
   }
+
+  /**
+   * Complete function.
+   * @param \stdClass $node
+   * @param \stdClass $row
+   */
+  public function complete(stdClass $node, stdClass $row) {
+    parent::complete($node, $row);
+
+    // Paragraphs migration.
+    if (module_exists('paragraphs')) {
+      if (isset($node->field_case_studies)) {
+        $paragraph = new ParagraphsItemEntity(array(
+          'field_name' => 'field_case_studies',
+          'bundle' => 'pb_resources_section',
+        ));
+        $paragraph->is_new = TRUE;
+        $paragraph->setHostEntity('node', $node);
+        $paragraph->field_resource_source[LANGUAGE_NONE][0]['value'] = 'Website';
+        $paragraph->field_resouce_year[LANGUAGE_NONE][0]['value'] = '1978';
+        $paragraph->field_link_to_default_file[LANGUAGE_NONE][0]['value'] = '1';
+        $paragraph->save();
+      }
+    }
+  }
 }
 
 /**
