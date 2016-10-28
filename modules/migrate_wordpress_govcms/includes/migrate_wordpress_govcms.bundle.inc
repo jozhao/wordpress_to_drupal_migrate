@@ -174,59 +174,65 @@ class GovCMSMigrateWordPressEexCaseStudy extends GovCMSMigrateWordPressBundle {
 
         $file_0 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_0\')]/following-sibling::wp:meta_value'));
         if (!empty($file_0)&& ($file_0 !== ',,,')) {
-          $paragraph = new ParagraphsItemEntity(array(
-            'field_name' => 'field_case_studies',
-            'bundle' => 'pb_resources_listing',
-          ));
-          $paragraph->is_new = TRUE;
-          $paragraph->setHostEntity('node', $node);
-
           $resource = explode(',', $file_0);
 
-          $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
-          $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
-          $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
-          $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+          if (!empty($resource[0])) {
+            $paragraph = new ParagraphsItemEntity(array(
+              'field_name' => 'field_case_studies',
+              'bundle' => 'pb_resources_listing',
+            ));
+            $paragraph->is_new = TRUE;
+            $paragraph->setHostEntity('node', $node);
 
-          $paragraph->save();
+            $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
+            $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
+            $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
+            $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+
+            $paragraph->save();
+          }
         }
 
         $file_1 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_1\')]/following-sibling::wp:meta_value'));
         if (!empty($file_1) && ($file_1 !== ',,,')) {
-          $paragraph = new ParagraphsItemEntity(array(
-            'field_name' => 'field_case_studies',
-            'bundle' => 'pb_resources_listing',
-          ));
-          $paragraph->is_new = TRUE;
-          $paragraph->setHostEntity('node', $node);
-
           $resource = explode(',', $file_1);
 
-          $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
-          $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
-          $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
-          $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+          if (!empty($resource[0])) {
+            $paragraph = new ParagraphsItemEntity(array(
+              'field_name' => 'field_case_studies',
+              'bundle' => 'pb_resources_listing',
+            ));
+            $paragraph->is_new = TRUE;
+            $paragraph->setHostEntity('node', $node);
 
-          $paragraph->save();
+            $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
+            $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
+            $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
+            $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+
+            $paragraph->save();
+          }
         }
 
         $file_2 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_2\')]/following-sibling::wp:meta_value'));
         if (!empty($file_2) && ($file_2 !== ',,,')) {
-          $paragraph = new ParagraphsItemEntity(array(
-            'field_name' => 'field_case_studies',
-            'bundle' => 'pb_resources_listing',
-          ));
-          $paragraph->is_new = TRUE;
-          $paragraph->setHostEntity('node', $node);
-
           $resource = explode(',', $file_2);
 
-          $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
-          $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
-          $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
-          $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+          if (!empty($resource[0])) {
+            $paragraph = new ParagraphsItemEntity(array(
+              'field_name' => 'field_case_studies',
+              'bundle' => 'pb_resources_listing',
+            ));
+            $paragraph->is_new = TRUE;
+            $paragraph->setHostEntity('node', $node);
 
-          $paragraph->save();
+            $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
+            $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
+            $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
+            $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+
+            $paragraph->save();
+          }
         }
       }
     }
@@ -315,6 +321,85 @@ class GovCMSMigrateWordPressEexResources extends GovCMSMigrateWordPressBundle {
     $this->addFieldMapping('field_link_to_default_file', 'field_link_to_default_file')
       ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_resource_link_to_file\')]/following-sibling::wp:meta_value')
       ->defaultValue('1');
+  }
+
+  /**
+   * Complete function.
+   * @param \stdClass $node
+   * @param \stdClass $row
+   */
+  public function complete(stdClass $node, stdClass $row) {
+    parent::complete($node, $row);
+
+    // Paragraphs migration.
+    if (module_exists('paragraphs')) {
+      // Paragraphs field.
+      if (!isset($node->field_resource)) {
+
+        $file_0 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_0\')]/following-sibling::wp:meta_value'));
+        if (!empty($file_0)&& ($file_0 !== ',,,')) {
+          $resource = explode(',', $file_0);
+
+          if (!empty($resource[0])) {
+            $paragraph = new ParagraphsItemEntity(array(
+              'field_name' => 'field_resource',
+              'bundle' => 'pb_resources_listing',
+            ));
+            $paragraph->is_new = TRUE;
+            $paragraph->setHostEntity('node', $node);
+
+            $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
+            $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
+            $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
+            $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+
+            $paragraph->save();
+          }
+        }
+
+        $file_1 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_1\')]/following-sibling::wp:meta_value'));
+        if (!empty($file_1) && ($file_1 !== ',,,')) {
+          $resource = explode(',', $file_1);
+
+          if (!empty($resource[0])) {
+            $paragraph = new ParagraphsItemEntity(array(
+              'field_name' => 'field_resource',
+              'bundle' => 'pb_resources_listing',
+            ));
+            $paragraph->is_new = TRUE;
+            $paragraph->setHostEntity('node', $node);
+
+            $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
+            $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
+            $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
+            $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+
+            $paragraph->save();
+          }
+        }
+
+        $file_2 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_2\')]/following-sibling::wp:meta_value'));
+        if (!empty($file_2) && ($file_2 !== ',,,')) {
+          $resource = explode(',', $file_2);
+
+          if (!empty($resource[0])) {
+            $paragraph = new ParagraphsItemEntity(array(
+              'field_name' => 'field_resource',
+              'bundle' => 'pb_resources_listing',
+            ));
+            $paragraph->is_new = TRUE;
+            $paragraph->setHostEntity('node', $node);
+
+            $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
+            $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
+            $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
+            $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
+
+            $paragraph->save();
+          }
+        }
+      }
+    }
   }
 }
 
