@@ -173,7 +173,7 @@ class GovCMSMigrateWordPressEexCaseStudy extends GovCMSMigrateWordPressBundle {
       if (!isset($node->field_case_studies)) {
 
         $file_0 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_0\')]/following-sibling::wp:meta_value'));
-        if (!empty($file_0)&& ($file_0 !== ',,,')) {
+        if (!empty($file_0) && ($file_0 !== ',,,')) {
           $resource = explode(',', $file_0);
 
           if (!empty($resource[0])) {
@@ -337,7 +337,7 @@ class GovCMSMigrateWordPressEexResources extends GovCMSMigrateWordPressBundle {
       if (!isset($node->field_resource)) {
 
         $file_0 = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_file_0\')]/following-sibling::wp:meta_value'));
-        if (!empty($file_0)&& ($file_0 !== ',,,')) {
+        if (!empty($file_0) && ($file_0 !== ',,,')) {
           $resource = explode(',', $file_0);
 
           if (!empty($resource[0])) {
@@ -351,6 +351,9 @@ class GovCMSMigrateWordPressEexResources extends GovCMSMigrateWordPressBundle {
             $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0];
             $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = $resource[1];
             $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[2];
+            if (!isset($resource[3])) {
+              $resource[3] = 0;
+            }
             $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[3] == 'yes' ? 1 : 0;
 
             $paragraph->save();
