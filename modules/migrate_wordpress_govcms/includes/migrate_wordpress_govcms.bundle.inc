@@ -473,6 +473,10 @@ class GovCMSMigrateWordPressEexProgram extends GovCMSMigrateWordPressBundle {
     // Location field mapping.
     $this->addFieldMapping('field_locations', 'field_locations')
       ->xpath('category[@domain="eex_location"]');
+
+    // Add custom resource fields.
+    $this->addFieldMapping('field_resource_source', 'field_resource_source')
+      ->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_program_source\')]/following-sibling::wp:meta_value');
   }
 
   /**
@@ -487,6 +491,44 @@ class GovCMSMigrateWordPressEexProgram extends GovCMSMigrateWordPressBundle {
     }
 
     return TRUE;
+  }
+
+  /**
+   * More migration after node_save.
+   * @param \stdClass $node
+   * @param \stdClass $row
+   */
+  public function complete(stdClass $node, stdClass $row) {
+    parent::complete($node, $row);
+
+    // Paragraphs migration.
+    if (module_exists('paragraphs')) {
+      // Paragraphs field.
+      if (!isset($node->field_program_details)) {
+
+        $urls = $this->xpathValue($row->xml->xpath('wp:postmeta/wp:meta_key[contains(text(), \'_eex_program_urls\')]/following-sibling::wp:meta_value'));
+        if (!empty($urls)) {
+          $resource = unserialize($urls);
+
+          if (!empty($resource[0]['url'])) {
+            $paragraph = new ParagraphsItemEntity(array(
+              'field_name' => 'field_program_details',
+              'bundle' => 'pb_resources_listing',
+            ));
+            $paragraph->is_new = TRUE;
+            $paragraph->setHostEntity('node', $node);
+
+            $paragraph->field_resource_url[LANGUAGE_NONE][0]['url'] = $resource[0]['url'];
+            $paragraph->field_resource_size[LANGUAGE_NONE][0]['value'] = '';
+            $paragraph->field_resource_type[LANGUAGE_NONE][0]['value'] = $resource[0]['type'];
+            $paragraph->field_resource_external[LANGUAGE_NONE][0]['value'] = $resource[0]['external'] == 'yes' ? 1 : 0;
+
+            $paragraph->save();
+          }
+        }
+
+      }
+    }
   }
 }
 
