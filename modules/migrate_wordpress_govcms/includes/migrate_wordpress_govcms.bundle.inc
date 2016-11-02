@@ -68,9 +68,10 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
 
     // Exclude some post from migration.
     $exclude_ids = [
-      '61',
-      '128',
-      '438',
+      '61', // Home page.
+      '128', // Feedback.
+      '438', // News landing page.
+      '21788', // EEO opportunities register.
     ];
     if (in_array($row->{'wp:post_id'}, $exclude_ids)) {
       $this->skippedItems[] = $row->{'wp:post_id'};
@@ -91,8 +92,6 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
 
     // Try to fix local links.
     $row->content = $this->fixLocalLinks($row->content);
-
-    $row->{'content:encoded'} = $row->content;
 
     return TRUE;
   }
