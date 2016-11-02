@@ -17,6 +17,27 @@ class GovCMSMigrateWordPressBundle extends MigrateWordPressBundle {
   public function prepareRow($row) {
     return parent::prepareRow($row);
   }
+
+  /**
+   * Fix domain.
+   * @param $text
+   * @return mixed
+   */
+  public function fixDomain($text) {
+    $replacements = [
+      //'https://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
+      //'http://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
+      //'https://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
+      //'http://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
+      'https://eex.govspace.gov.au/' => '/',
+      'http://eex.govspace.gov.au/' => '/',
+      'https://eex.gov.au/' => '/',
+      'http://eex.gov.au/' => '/',
+    ];
+    $text = str_replace(array_keys($replacements), $replacements, $text);
+
+    return $text;
+  }
 }
 
 /**
@@ -45,6 +66,18 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
       return FALSE;
     }
 
+    // Exclude some post from migration.
+    $exclude_ids = [
+      '61',
+      '128',
+      '438',
+    ];
+    if (in_array($row->{'wp:post_id'}, $exclude_ids)) {
+      $this->skippedItems[] = $row->{'wp:post_id'};
+
+      return FALSE;
+    }
+
     // Fetch content from WordPress directly.
     try {
       $wp_link = (string) $row->xml->link;;
@@ -56,7 +89,28 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
       return FALSE;
     }
 
+    // Try to fix local links.
+    $row->content = $this->fixLocalLinks($row->content);
+
+    $row->{'content:encoded'} = $row->content;
+
     return TRUE;
+  }
+
+  /**
+   * Return is complete status.
+   * @return bool
+   */
+  public function isComplete() {
+    $total = $this->sourceCount(TRUE);
+    // If the source is uncountable, we have no way of knowing if it's
+    // complete, so stipulate that it is.
+    if ($total < 0) {
+      return TRUE;
+    }
+    $processed = $this->processedCount();
+
+    return $processed > 0;
   }
 }
 

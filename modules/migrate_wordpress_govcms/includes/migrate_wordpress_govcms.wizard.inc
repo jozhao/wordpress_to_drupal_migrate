@@ -453,7 +453,6 @@ class GovCMSMigrateWordPressWizardExtender extends MigrateUIWizardExtender {
     if ($machine_name == 'Attachment') {
       $arguments['dependencies'][] = 'EexOpportunities';
       $arguments['dependencies'][] = 'CaseStudies';
-      $arguments['dependencies'][] = 'Events';
       $arguments['dependencies'][] = 'EexResources';
       $arguments['dependencies'][] = 'EexContact';
       $arguments['dependencies'][] = 'EexGlossary';
