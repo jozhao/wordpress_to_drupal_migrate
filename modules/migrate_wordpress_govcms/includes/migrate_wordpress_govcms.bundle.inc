@@ -25,10 +25,10 @@ class GovCMSMigrateWordPressBundle extends MigrateWordPressBundle {
    */
   public function fixDomain($text) {
     $replacements = [
-      //'https://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
-      //'http://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
-      //'https://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
-      //'http://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files/') . 'files/files',
+      'https://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
+      'http://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
+      'https://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
+      'http://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
       'https://eex.govspace.gov.au/' => '/',
       'http://eex.govspace.gov.au/' => '/',
       'https://eex.gov.au/' => '/',
@@ -74,6 +74,12 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
       return FALSE;
     }
 
+    // Always include this fragment at the beginning of every prepareRow()
+    // implementation, so parent classes can ignore rows.
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
+
     $wp_link = (string) $row->xml->link;;
     $wp_link = str_replace('http://', 'https://', $wp_link);
     $wp_post = htmlqp($wp_link, 'div.entry-content');
@@ -85,6 +91,9 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
     else {
       return FALSE;
     }
+
+    // Replace domain.
+    $row->content = $this->fixDomain($row->content);
 
     return TRUE;
   }
