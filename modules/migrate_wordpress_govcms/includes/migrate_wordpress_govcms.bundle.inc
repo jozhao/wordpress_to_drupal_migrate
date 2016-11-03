@@ -76,7 +76,7 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
 
     $wp_link = (string) $row->xml->link;;
     $wp_link = str_replace('http://', 'https://', $wp_link);
-    $wp_post = htmlqp($wp_link, 'div.hfeed');
+    $wp_post = htmlqp($wp_link, 'div.entry-content');
 
     // Save remote content.
     if (!empty($wp_post->html())) {
