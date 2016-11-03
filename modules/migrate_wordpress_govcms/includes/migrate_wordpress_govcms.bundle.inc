@@ -60,15 +60,10 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
    * @return bool|string
    */
   public function prepareRow($row) {
-    // Always include this fragment at the beginning of every prepareRow()
-    // implementation, so parent classes can ignore rows.
-    if (parent::prepareRow($row) === FALSE) {
-      return FALSE;
-    }
-
     // Exclude some post from migration.
     $exclude_ids = [
       '61', // Home page.
+      '72', // Contact us page.
       '128', // Feedback.
       '438', // News landing page.
       '21788', // EEO opportunities register.
@@ -79,19 +74,17 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
       return FALSE;
     }
 
-    // Fetch content from WordPress directly.
-    try {
-      $wp_link = (string) $row->xml->link;;
-      $wp_link = str_replace('http://', 'https://', $wp_link);
+    $wp_link = (string) $row->xml->link;;
+    $wp_link = str_replace('http://', 'https://', $wp_link);
+    $wp_post = htmlqp($wp_link, 'div.hfeed');
 
-      $wp_post = htmlqp($wp_link, 'div.entry-content');
+    // Save remote content.
+    if (!empty($wp_post->html())) {
       $row->content = $wp_post->html();
-    } catch (Exception $exception) {
+    }
+    else {
       return FALSE;
     }
-
-    // Try to fix local links.
-    $row->content = $this->fixLocalLinks($row->content);
 
     return TRUE;
   }
