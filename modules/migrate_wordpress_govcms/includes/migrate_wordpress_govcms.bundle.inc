@@ -25,10 +25,10 @@ class GovCMSMigrateWordPressBundle extends MigrateWordPressBundle {
    */
   public function fixDomain($text) {
     $replacements = [
-      'https://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
-      'http://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
-      'https://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
-      'http://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files/files',
+      'https://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files',
+      'http://eex.govspace.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files',
+      'https://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files',
+      'http://eex.gov.au/files' => '/' . variable_get('file_public_path', conf_path() . '/files') . '/files',
       'https://eex.govspace.gov.au/' => '/',
       'http://eex.govspace.gov.au/' => '/',
       'https://eex.gov.au/' => '/',
