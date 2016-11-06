@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file
+ * Module file.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function migrate_cleanup_menu() {
+  $items['admin/config/development/migrate_cleanup'] = array(
+    'title' => 'Migrate Cleanup',
+    'description' => 'Clean up migration',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('migrate_cleanup_form'),
+    'file' => 'migrate_cleanup.admin.inc',
+    'access arguments' => array('administer site configuration'),
+  );
+
+  return $items;
+}
+
+/**
+ * Clean up process.
+ */
+function migrate_cleanup_process() {
+  $query = new EntityFieldQuery();
+  $query
+    ->entityCondition('entity_type', 'node', '=');
+
+  $result = $query->execute();
+
+  if (isset($result['node'])) {
+    $entity_ids = array_keys($result['node']);
+
+    // Using Batch API for bulk processing.
+    $batch = array(
+      'title' => t('Migrate - Clean up'),
+      'operations' => array(),
+      'finished' => 'migrate_cleanup_rebuild_batch_finished',
+      'init_message' => t('Initializing...'),
+      'progress_message' => t('Processing @current out of @total instances.'),
+      'error_message' => t('Processing encountered an error.'),
+      'file' => drupal_get_path('module', 'migrate_cleanup') . '/migrate_cleanup.batch.inc',
+    );
+
+    foreach ($entity_ids as $id) {
+      // We create a new process for each entity, as a means of keeping
+      // the.
+      // batch process more transparent.
+      $batch['operations'][] = array(
+        'migrate_cleanup_rebuild_batch_process_entity',
+        array(
+          $id,
+        ),
+      );
+    }
+
+    batch_set($batch);
+    batch_process();
+  }
+  else {
+    drupal_set_message(t('There are no existing contents.'), 'warning');
+
+    return FALSE;
+  }
+}

@@ -1,0 +1,4 @@
+name = "Migrate Cleanup"
+description = "Clean up migration"
+package = "Migration"
+core = 7.x
