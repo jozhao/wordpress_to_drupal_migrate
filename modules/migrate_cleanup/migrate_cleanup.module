@@ -101,6 +101,9 @@ function _migrate_cleanup_custom_tokens() {
  * @return mixed
  */
 function _migrate_cleanup_token_process($text) {
+  // Load include file.
+  module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress.inc');
+
   $tokens = _migrate_cleanup_custom_tokens();
 
   if (FALSE === strpos($text, '[')) {
@@ -127,6 +130,9 @@ function _migrate_cleanup_token_process($text) {
  * Process custom token callback.
  */
 function _migrate_cleanup_token_callback($m) {
+  // Load include file.
+  module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress.inc');
+
   $tokens = _migrate_cleanup_custom_tokens();
 
   // allow [[foo]] syntax for escaping a tag
@@ -136,6 +142,10 @@ function _migrate_cleanup_token_callback($m) {
 
   $tag = $m[2];
   $attr = shortcode_parse_atts($m[3]);
+
+  drupal_debug($attr, $tag . 'attributes');
+
+  drupal_debug($m, $tag . 'matches');
 
   if (!is_callable($tokens[$tag])) {
     return $m[0];

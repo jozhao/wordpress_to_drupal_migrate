@@ -7,19 +7,29 @@
 
 function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
   $entity = entity_load_single('node', $entity_id);
-  $node_wrapper = entity_metadata_wrapper('node', $entity);
+  // If entity can be loaded.
+  if ($entity) {
+    $node_wrapper = entity_metadata_wrapper('node', $entity);
+    // Check if body value is set.
+    if ($node_wrapper && $node_wrapper->body->value()) {
+      $content = $node_wrapper->body->value->value();
 
-  $content = $node_wrapper->body->value->value();
-  $content = _migrate_cleanup_token_process($content);
+      if (!empty($content)) {
+        $content = _migrate_cleanup_token_process($content);
 
-  // Set body value.
-  $body = [
-    'value' => filter_xss_admin($content),
-    'format' => 'rich_text',
-  ];
+        // Set body value.
+        $body = [
+          'value' => filter_xss_admin($content),
+          'format' => 'rich_text',
+        ];
 
-  $node_wrapper->body->set($body);
-  $node_wrapper->save();
+        if (!empty($body)) {
+          $node_wrapper->body->set($body);
+          $node_wrapper->save();
+        }
+      }
+    }
+  }
 
   // Update batch progress information.
   if (!isset($context['results']['processed'])) {
