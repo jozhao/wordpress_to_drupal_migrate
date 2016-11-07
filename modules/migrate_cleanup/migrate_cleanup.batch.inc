@@ -6,11 +6,11 @@
  */
 
 function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
-  $entity = entity_load('node', array($entity_id), array(), TRUE);
+  $entity = entity_load_single('node', $entity_id);
   $node_wrapper = entity_metadata_wrapper('node', $entity);
 
   $content = $node_wrapper->body->value->value();
-  $content = migrate_cleanup_token_process($content);
+  $content = _migrate_cleanup_token_process($content);
 
   // Set body value.
   $body = [

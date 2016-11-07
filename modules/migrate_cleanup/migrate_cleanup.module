@@ -24,7 +24,7 @@ function migrate_cleanup_menu() {
 /**
  * Clean up process.
  */
-function migrate_cleanup_process() {
+function _migrate_cleanup_process() {
   $query = new EntityFieldQuery();
   $query
     ->entityCondition('entity_type', 'node', '=');
@@ -70,7 +70,7 @@ function migrate_cleanup_process() {
 /**
  * Resource token callback.
  */
-function migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
+function _migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
   $output = '[' . $tag;
   $ids = $attr['ids'];
 
@@ -88,7 +88,7 @@ function migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
  *
  * @return array
  */
-function migrate_cleanup_custom_tokens() {
+function _migrate_cleanup_custom_tokens() {
   return array(
     'resource' => 'migrate_cleanup_token_resource',
   );
@@ -100,8 +100,8 @@ function migrate_cleanup_custom_tokens() {
  * @param $text
  * @return mixed
  */
-function migrate_cleanup_token_process($text) {
-  $tokens = migrate_cleanup_custom_tokens();
+function _migrate_cleanup_token_process($text) {
+  $tokens = _migrate_cleanup_custom_tokens();
 
   if (FALSE === strpos($text, '[')) {
     return $text;
@@ -118,7 +118,7 @@ function migrate_cleanup_token_process($text) {
 
   $pattern = get_shortcode_regex($tags);
 
-  $text = preg_replace_callback("/$pattern/", 'migrate_cleanup_token_callback', $text);
+  $text = preg_replace_callback("/$pattern/", '_migrate_cleanup_token_callback', $text);
 
   return $text;
 }
@@ -126,8 +126,8 @@ function migrate_cleanup_token_process($text) {
 /**
  * Process custom token callback.
  */
-function migrate_cleanup_token_callback($m) {
-  $tokens = migrate_cleanup_custom_tokens();
+function _migrate_cleanup_token_callback($m) {
+  $tokens = _migrate_cleanup_custom_tokens();
 
   // allow [[foo]] syntax for escaping a tag
   if ($m[1] == '[' && $m[6] == ']') {

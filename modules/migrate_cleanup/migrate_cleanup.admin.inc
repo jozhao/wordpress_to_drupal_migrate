@@ -36,7 +36,7 @@ function migrate_cleanup_form() {
  */
 function migrate_cleanup_form_submit($form, &$form_state) {
   if ($form_state['values']['op'] == t('Cleanup the migrated contents')) {
-    migrate_cleanup_process();
+    _migrate_cleanup_process();
     drupal_set_message(t('Done, Cheers'));
   }
   else {
