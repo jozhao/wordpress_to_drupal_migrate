@@ -72,7 +72,8 @@ function _migrate_cleanup_process() {
  */
 function _migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
   $output = '[' . $tag;
-  $ids = $attr['ids'];
+  // Strip whitespace in ids.
+  $ids = str_replace(' ', '', $attr['ids']);
   $ids_array = explode(',', $ids);
 
   if (!empty($ids)) {
