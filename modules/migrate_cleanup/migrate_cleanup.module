@@ -90,7 +90,7 @@ function _migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
  */
 function _migrate_cleanup_custom_tokens() {
   return array(
-    'resource' => 'migrate_cleanup_token_resource',
+    'resource' => '_migrate_cleanup_token_resource',
   );
 }
 
