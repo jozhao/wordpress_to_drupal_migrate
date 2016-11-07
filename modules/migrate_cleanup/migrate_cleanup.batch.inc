@@ -13,19 +13,36 @@ function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
     // Check if body value is set.
     if ($node_wrapper && $node_wrapper->body->value()) {
       $content = $node_wrapper->body->value->value();
-
+      // Check if content is empty.
       if (!empty($content)) {
-        $content = _migrate_cleanup_token_process($content);
+        if (FALSE === strpos($content, '[')) {
+          // Ignore this content.
+        }
+        else {
+          // Load include file.
+          module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress.inc');
 
-        // Set body value.
-        $body = [
-          'value' => filter_xss_admin($content),
-          'format' => 'rich_text',
-        ];
+          $tokens = _migrate_cleanup_custom_tokens();
 
-        if (!empty($body)) {
-          $node_wrapper->body->set($body);
-          $node_wrapper->save();
+          // Find all registered tag names in $content.
+          preg_match_all('@\[([^<>&/\[\]\x00-\x20=]++)@', $content, $matches);
+          $tags = array_intersect(array_keys($tokens), $matches[1]);
+
+          // Return if no tag found.
+          if (!empty($tags)) {
+            $content = _migrate_cleanup_token_process($content);
+
+            // Set body value.
+            $body = [
+              'value' => filter_xss_admin($content),
+              'format' => 'rich_text',
+            ];
+
+            if (!empty($body)) {
+              $node_wrapper->body->set($body);
+              $node_wrapper->save();
+            }
+          }
         }
       }
     }

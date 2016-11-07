@@ -102,7 +102,7 @@ function _migrate_cleanup_custom_tokens() {
  */
 function _migrate_cleanup_token_process($text) {
   // Load include file.
-  module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress.inc');
+  module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress');
 
   $tokens = _migrate_cleanup_custom_tokens();
 
@@ -131,7 +131,7 @@ function _migrate_cleanup_token_process($text) {
  */
 function _migrate_cleanup_token_callback($m) {
   // Load include file.
-  module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress.inc');
+  module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress');
 
   $tokens = _migrate_cleanup_custom_tokens();
 
