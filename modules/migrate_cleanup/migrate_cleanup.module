@@ -66,3 +66,87 @@ function migrate_cleanup_process() {
     return FALSE;
   }
 }
+
+/**
+ * Resource token callback.
+ */
+function migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
+  $output = '[' . $tag;
+  $ids = $attr['ids'];
+
+  if (!empty($ids)) {
+    $output .= ' ' . $ids;
+  }
+
+  $output .= ']';
+
+  return $output;
+}
+
+/**
+ * List of custom tokens.
+ *
+ * @return array
+ */
+function migrate_cleanup_custom_tokens() {
+  return array(
+    'resource' => 'migrate_cleanup_token_resource',
+  );
+}
+
+/**
+ * Process custom tokens.
+ *
+ * @param $text
+ * @return mixed
+ */
+function migrate_cleanup_token_process($text) {
+  $tokens = migrate_cleanup_custom_tokens();
+
+  if (FALSE === strpos($text, '[')) {
+    return $text;
+  }
+
+  // Find all registered tag names in $content.
+  preg_match_all('@\[([^<>&/\[\]\x00-\x20=]++)@', $text, $matches);
+  $tags = array_intersect(array_keys($tokens), $matches[1]);
+
+  // Return if no tag found.
+  if (empty($tags)) {
+    return $text;
+  }
+
+  $pattern = get_shortcode_regex($tags);
+
+  $text = preg_replace_callback("/$pattern/", 'migrate_cleanup_token_callback', $text);
+
+  return $text;
+}
+
+/**
+ * Process custom token callback.
+ */
+function migrate_cleanup_token_callback($m) {
+  $tokens = migrate_cleanup_custom_tokens();
+
+  // allow [[foo]] syntax for escaping a tag
+  if ($m[1] == '[' && $m[6] == ']') {
+    return substr($m[0], 1, -1);
+  }
+
+  $tag = $m[2];
+  $attr = shortcode_parse_atts($m[3]);
+
+  if (!is_callable($tokens[$tag])) {
+    return $m[0];
+  }
+
+  if (isset($m[5])) {
+    // enclosing tag - extra parameter
+    return $m[1] . call_user_func($tokens[$tag], $attr, $m[5], $tag) . $m[6];
+  }
+  else {
+    // self-closing tag
+    return $m[1] . call_user_func($tokens[$tag], $attr, NULL, $tag) . $m[6];
+  }
+}
