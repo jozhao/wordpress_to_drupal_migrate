@@ -73,10 +73,20 @@ function _migrate_cleanup_process() {
 function _migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
   $output = '[' . $tag;
   $ids = $attr['ids'];
+  $ids_array = explode(',', $ids);
 
   if (!empty($ids)) {
-    drupal_debug($ids, 'ids need to be replaced');
-    $output .= ' ' . $ids;
+    $trans = db_select('migrate_map_eexgovauenergyefficiencyexchangeeexresources', 'r')
+      ->fields('r', ['sourceid1', 'destid1'])
+      ->condition('sourceid1', $ids_array, 'IN')
+      ->execute()
+      ->fetchAllKeyed();
+
+    if (!empty($trans)) {
+      $ids = strtr($ids, $trans);
+    }
+
+    $output .= ' ids="' . $ids . '"';
   }
 
   $output .= ']';
