@@ -5,6 +5,12 @@
  * Batch file.
  */
 
+/**
+ * Process entity.
+ *
+ * @param $entity_id
+ * @param $context
+ */
 function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
   $entity = entity_load_single('node', $entity_id);
   // If entity can be loaded.
