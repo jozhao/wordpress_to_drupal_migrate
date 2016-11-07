@@ -75,6 +75,7 @@ function _migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
   $ids = $attr['ids'];
 
   if (!empty($ids)) {
+    drupal_debug($ids, 'ids need to be replaced');
     $output .= ' ' . $ids;
   }
 
@@ -142,10 +143,6 @@ function _migrate_cleanup_token_callback($m) {
 
   $tag = $m[2];
   $attr = shortcode_parse_atts($m[3]);
-
-  drupal_debug($attr, $tag . 'attributes');
-
-  drupal_debug($m, $tag . 'matches');
 
   if (!is_callable($tokens[$tag])) {
     return $m[0];
