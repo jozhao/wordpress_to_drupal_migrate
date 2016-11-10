@@ -21,32 +21,47 @@ function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
       $content = $node_wrapper->body->value->value();
       // Check if content is empty.
       if (!empty($content)) {
-        if (FALSE === strpos($content, '[')) {
-          // Ignore this content.
+        $actions = [];
+
+        $content = str_replace('<p>&nbsp;</p>', '', $content);
+
+        if (!empty($content)) {
+          // Set body value.
+          $body = [
+            'value' => $content,
+            'format' => 'rich_text',
+          ];
+          $node_wrapper->body->set($body);
+          $node_wrapper->save();
         }
-        else {
-          // Load include file.
-          module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress.inc');
 
-          $tokens = _migrate_cleanup_custom_tokens();
+        if (in_array('resource', $actions)) {
+          if (FALSE === strpos($content, '[')) {
+            // Ignore this content.
+          }
+          else {
+            // Load include file.
+            module_load_include('inc', 'migrate_cleanup', 'includes/migrate_cleanup.wordpress.inc');
 
-          // Find all registered tag names in $content.
-          preg_match_all('@\[([^<>&/\[\]\x00-\x20=]++)@', $content, $matches);
-          $tags = array_intersect(array_keys($tokens), $matches[1]);
+            $tokens = _migrate_cleanup_custom_tokens();
 
-          // Return if no tag found.
-          if (!empty($tags)) {
-            $content = _migrate_cleanup_token_process($content);
+            // Find all registered tag names in $content.
+            preg_match_all('@\[([^<>&/\[\]\x00-\x20=]++)@', $content, $matches);
+            $tags = array_intersect(array_keys($tokens), $matches[1]);
 
-            // Set body value.
-            $body = [
-              'value' => filter_xss_admin($content),
-              'format' => 'rich_text',
-            ];
+            // Return if no tag found.
+            if (!empty($tags)) {
+              $content = _migrate_cleanup_token_process($content);
 
-            if (!empty($body)) {
-              $node_wrapper->body->set($body);
-              $node_wrapper->save();
+              if (!empty($content)) {
+                // Set body value.
+                $body = [
+                  'value' => $content,
+                  'format' => 'rich_text',
+                ];
+                $node_wrapper->body->set($body);
+                $node_wrapper->save();
+              }
             }
           }
         }
