@@ -18,7 +18,7 @@ function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
     $node_wrapper = entity_metadata_wrapper('node', $entity);
     // Check if body value is set.
     if ($node_wrapper && $node_wrapper->body->value()) {
-      $content = $node_wrapper->body->value->value();
+      $content = $entity->body['und'][0]['value'];
       // Check if content is empty.
       if (!empty($content)) {
         $actions = [
