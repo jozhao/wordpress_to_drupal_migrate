@@ -21,21 +21,21 @@ function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
       $content = $node_wrapper->body->value->value();
       // Check if content is empty.
       if (!empty($content)) {
-        $actions = [];
+        $actions = [
+          'content',
+          //'token',
+        ];
 
-        $content = str_replace('<p>&nbsp;</p>', '', $content);
+        if (in_array('content', $actions)) {
+          $content = str_replace('<p>&nbsp;</p>', '', $content);
 
-        if (!empty($content)) {
-          // Set body value.
-          $body = [
-            'value' => $content,
-            'format' => 'rich_text',
-          ];
-          $node_wrapper->body->set($body);
-          $node_wrapper->save();
+          if (!empty($content)) {
+            $entity->body['und'][0]['value'] = $content;
+            node_save($entity);
+          }
         }
 
-        if (in_array('resource', $actions)) {
+        if (in_array('token', $actions)) {
           if (FALSE === strpos($content, '[')) {
             // Ignore this content.
           }
@@ -54,13 +54,8 @@ function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
               $content = _migrate_cleanup_token_process($content);
 
               if (!empty($content)) {
-                // Set body value.
-                $body = [
-                  'value' => $content,
-                  'format' => 'rich_text',
-                ];
-                $node_wrapper->body->set($body);
-                $node_wrapper->save();
+                $entity->body['und'][0]['value'] = $content;
+                node_save($entity);
               }
             }
           }

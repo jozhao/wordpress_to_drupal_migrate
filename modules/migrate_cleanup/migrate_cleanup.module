@@ -96,13 +96,42 @@ function _migrate_cleanup_token_resource($attr, $extras = NULL, $tag) {
 }
 
 /**
+ * Resource token callback.
+ */
+function _migrate_cleanup_token_casestudy($attr, $extras = NULL, $tag) {
+  $output = '[' . $tag;
+  // Strip whitespace in ids.
+  $ids = str_replace(' ', '', $attr['ids']);
+  $ids_array = explode(',', $ids);
+
+  if (!empty($ids)) {
+    $trans = db_select('migrate_map_eexgovauenergyefficiencyexchangecasestudies', 'r')
+      ->fields('r', ['sourceid1', 'destid1'])
+      ->condition('sourceid1', $ids_array, 'IN')
+      ->execute()
+      ->fetchAllKeyed();
+
+    if (!empty($trans)) {
+      $ids = strtr($ids, $trans);
+    }
+
+    $output .= ' ids="' . $ids . '"';
+  }
+
+  $output .= ']';
+
+  return $output;
+}
+
+/**
  * List of custom tokens.
  *
  * @return array
  */
 function _migrate_cleanup_custom_tokens() {
   return array(
-    'resource' => '_migrate_cleanup_token_resource',
+    //'resource' => '_migrate_cleanup_token_resource',
+    'case-studies' => '_migrate_cleanup_token_casestudy',
   );
 }
 
