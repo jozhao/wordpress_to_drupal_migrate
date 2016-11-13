@@ -64,8 +64,10 @@ class GovCMSMigrateWordPressPage extends GovCMSMigrateWordPressBundle {
     $exclude_ids = [
       '61', // Home page.
       '72', // Contact us page.
+      '204', // Site map page.
       '128', // Feedback.
       '438', // News landing page.
+      '1828', // Programs landing page.
       '21788', // EEO opportunities register.
     ];
     if (in_array($row->{'wp:post_id'}, $exclude_ids)) {

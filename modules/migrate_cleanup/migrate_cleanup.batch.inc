@@ -22,8 +22,8 @@ function migrate_cleanup_rebuild_batch_process_entity($entity_id, &$context) {
       // Check if content is empty.
       if (!empty($content)) {
         $actions = [
-          'content',
-          //'token',
+          //'content',
+          'token',
         ];
 
         if (in_array('content', $actions)) {
